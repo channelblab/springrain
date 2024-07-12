@@ -1,0 +1,56 @@
+package com.channelblab.springrain.common.utils;
+
+import com.channelblab.springrain.model.Multilingual;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+/**
+ * @author     ：dengyi(A.K.A Bear)
+ * @date       ：Created in 2024-07-12 15:05
+ * @description：
+ * @modified By：
+ */
+public class MultilingualUtil {
+
+    private static Cache<Object, Object> cache;
+
+    static {
+        cache = Caffeine.newBuilder().build();
+    }
+
+    public static String getValue(String symbol, String lang) {
+        List<Multilingual> multilingualList = (List<Multilingual>) cache.getIfPresent(
+                lang);
+        if (!multilingualList.isEmpty()) {
+            //查找对应的value
+            Optional<String> firstValue = multilingualList.stream()
+                    .filter(m -> m.getSymbol().equals(symbol))
+                    .map(Multilingual::getValue).findFirst();
+            if (firstValue.isPresent()) {
+                return firstValue.get();
+            } else {
+                return "no value for" + lang + " " + symbol;
+
+            }
+
+        } else {
+            return "error";
+        }
+    }
+
+    public static void updateData(List<Multilingual> multilingualList) {
+
+        Map<String, List<Multilingual>> groupedByLang = multilingualList.stream()
+                .collect(Collectors.groupingBy(Multilingual::getLang));
+        groupedByLang.forEach((lang, list) -> {
+            cache.put(lang, list);
+        });
+
+
+    }
+}

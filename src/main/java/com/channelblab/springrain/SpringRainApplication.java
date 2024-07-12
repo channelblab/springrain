@@ -1,8 +1,8 @@
 package com.channelblab.springrain;
 
+import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.MultilingualDao;
 import com.channelblab.springrain.model.Multilingual;
-import com.github.benmanes.caffeine.cache.Cache;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,16 +24,12 @@ public class SpringRainApplication {
 
     @Autowired
     private MultilingualDao multilingualDao;
-    @Autowired
-    private Cache multilingualCache;
-
 
     @PostConstruct
     public void init() {
         System.err.println("-------------------");
 
-        List<Multilingual> multilinguals = multilingualDao.selectList(null);
-
-        multilingualCache.put("zh", multilinguals);
+        List<Multilingual> multilingualList = multilingualDao.selectList(null);
+        MultilingualUtil.updateData(multilingualList);
     }
 }

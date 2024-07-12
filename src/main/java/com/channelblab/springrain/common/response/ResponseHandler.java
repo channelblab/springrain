@@ -3,8 +3,6 @@ package com.channelblab.springrain.common.response;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -23,8 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @Component
 @RestControllerAdvice
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
-    @Autowired
-    private Cache multilingualCache;
 
 
     @Override

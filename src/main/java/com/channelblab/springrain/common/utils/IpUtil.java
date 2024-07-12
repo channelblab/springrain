@@ -2,6 +2,7 @@ package com.channelblab.springrain.common.utils;
 
 import org.springframework.util.ObjectUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -14,8 +15,8 @@ public class IpUtil {
         return "";
     }
 
-    public static String remoteIP() {
-        return "";
+    public static String remoteIP(HttpServletRequest request) {
+        return "111111.1.1.1";
     }
 
 

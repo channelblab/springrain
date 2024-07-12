@@ -1,9 +1,12 @@
 package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.channelblab.springrain.common.enums.RequestStatus;
 import io.swagger.annotations.ApiModel;
+import lombok.Builder;
+import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -11,14 +14,18 @@ import java.time.LocalDate;
  * @description：
  * @modified By：
  */
+@Data
+@Builder
 @ApiModel
 @TableName("system_log")
 public class Log {
     private String id;
     private String userId;
     private String sourceIp;
+    private String requestUri;
+    private RequestStatus status;
     private String request;
     private String response;
-    private Integer apiProcessingMillis;
-    private LocalDate createTime;
+    private Long apiProcessingMillis;
+    private LocalDateTime createTime;
 }

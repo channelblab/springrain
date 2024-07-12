@@ -2,8 +2,11 @@ package com.channelblab.springrain.common.exception;
 
 
 import com.channelblab.springrain.common.response.Response;
+import com.channelblab.springrain.common.utils.MultilingualUtil;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +26,9 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(
             GlobalExceptionHandler.class);
+
+    @Autowired
+    private Cache multilingualCache;
 
     /**
      * 统一处理未特殊定义的异常
@@ -46,7 +52,9 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return e.getMessage();
+                String zh = MultilingualUtil.getValue(e.getMessage(), "zh");
+
+                return zh;
             }
 
             @Override
@@ -80,7 +88,8 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return be.getMessage();
+                String zh = MultilingualUtil.getValue(be.getMessage(), "zh");
+                return zh;
             }
 
             @Override

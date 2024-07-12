@@ -42,7 +42,7 @@ public class RateLimit {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String requestURI = request.getRequestURI();
-        String remoteIP = IpUtil.remoteIP();
+        String remoteIP = IpUtil.remoteIP(request);
         Object ifPresent = cache.getIfPresent(remoteIP + "/" + requestURI);
         long currentMillis = System.currentTimeMillis();
         if (ifPresent != null) {

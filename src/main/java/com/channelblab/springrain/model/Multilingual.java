@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
+import lombok.Data;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiModel;
  * @description：
  * @modified By：
  */
+@Data
 @ApiModel
 @TableName("system_multilingual")
 public class Multilingual {
@@ -19,4 +21,9 @@ public class Multilingual {
     private String lang;
     private String symbol;
     private String value;
+
+
+
+
+
 }
