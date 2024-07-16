@@ -1,6 +1,7 @@
 package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.time.LocalDate;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
  * @description：
  * @modified By：
  */
+@Data
 @TableName("perm_role")
 public class Role {
     private String id;

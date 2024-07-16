@@ -2,6 +2,7 @@ package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.channelblab.springrain.common.enums.PermissionType;
+import lombok.Data;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -9,10 +10,13 @@ import com.channelblab.springrain.common.enums.PermissionType;
  * @description：
  * @modified By：
  */
+@Data
 @TableName("perm_permission")
-public class PermissionPoint {
+public class Permission {
     private String id;
     private PermissionType type;
 
-    private String uri;
+    private String uris;
+
+    private String parentId;
 }

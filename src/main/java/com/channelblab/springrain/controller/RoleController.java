@@ -1,7 +1,9 @@
 package com.channelblab.springrain.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * controller for role
@@ -10,7 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
  * @description：
  * @modified By：
  */
+@Validated
 @RestController
-@RequestMapping("/log")
+@RequestMapping("/role")
 public class RoleController {
+
+
+    @PostMapping("add")
+    public void add() {
+
+    }
+
+    @GetMapping("/page")
+    public void page(Integer page, Integer size) {
+
+    }
+
+    @PutMapping("update")
+    public void update() {
+
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void add(@PathVariable @NotBlank String id) {
+
+    }
+
 }

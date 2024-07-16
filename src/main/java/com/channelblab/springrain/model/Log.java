@@ -26,6 +26,6 @@ public class Log {
     private RequestStatus status;
     private String request;
     private String response;
-    private Long apiProcessingMillis;
+    private Long costTime;
     private LocalDateTime createTime;
 }

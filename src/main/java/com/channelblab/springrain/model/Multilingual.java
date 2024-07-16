@@ -21,9 +21,4 @@ public class Multilingual {
     private String lang;
     private String symbol;
     private String value;
-
-
-
-
-
 }

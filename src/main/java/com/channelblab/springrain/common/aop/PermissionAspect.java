@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @Order(3)
 @Aspect
 @Component
-public class PermissionValidate {
+public class PermissionAspect {
     private static final Integer EXPIRE_MILLION_SECONDS = 1000;
     private static Cache<Object, Object> cache;
 

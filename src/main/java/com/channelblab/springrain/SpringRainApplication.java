@@ -7,8 +7,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -25,11 +26,12 @@ public class SpringRainApplication {
     @Autowired
     private MultilingualDao multilingualDao;
 
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
     public void init() {
         System.err.println("-------------------");
 
         List<Multilingual> multilingualList = multilingualDao.selectList(null);
         MultilingualUtil.updateData(multilingualList);
+
     }
 }
