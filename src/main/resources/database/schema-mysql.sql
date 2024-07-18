@@ -18,3 +18,12 @@ CREATE TABLE `system_log` (
                               `create_time` datetime NOT NULL,
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `perm_permission` (
+                                   `id` varchar(100) NOT NULL,
+                                   `type` varchar(100) DEFAULT NULL,
+                                   `uris` varchar(255) DEFAULT NULL,
+                                   `parent_id` varchar(100) DEFAULT NULL,
+                                   `name` varchar(255) DEFAULT NULL,
+                                   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
