@@ -1,8 +1,11 @@
 package com.channelblab.springrain.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.channelblab.springrain.common.enums.PermissionType;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -15,8 +18,12 @@ import lombok.Data;
 public class Permission {
     private String id;
     private PermissionType type;
+    private String name;
 
     private String uris;
 
     private String parentId;
+
+    @TableField(exist = false)
+    List<Permission> children;
 }

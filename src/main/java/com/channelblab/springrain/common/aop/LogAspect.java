@@ -1,5 +1,6 @@
 package com.channelblab.springrain.common.aop;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.common.enums.RequestStatus;
 import com.channelblab.springrain.common.utils.IpUtil;
 import com.channelblab.springrain.dao.LogDao;
@@ -43,13 +44,14 @@ public class LogAspect {
 
     @Autowired
     private LogDao logDao;
+    @Autowired
+    private ObjectMapper om;
 
     @Around("execution(* *..controller.*..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String method = request.getMethod();
-        ObjectMapper om = new ObjectMapper();
         String requestDataString = null;
         if (method.equals("GET") || method.equals("DELETE")) {
             Map<String, String> parameters = getParameters(request);
@@ -64,13 +66,29 @@ public class LogAspect {
             res = joinPoint.proceed();
             endTimeMillis = System.currentTimeMillis();
             long costTime = endTimeMillis - startTimeMillis;
-            Log newLog = Log.builder().createTime(LocalDateTime.now())
-                    .costTime(costTime).requestUri(request.getRequestURI())
-                    .status(RequestStatus.SUCCESS)
-                    .response(om.writeValueAsString(res))
-                    .request(requestDataString)
-                    .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
-            logDao.insert(newLog);
+            //todo 这里有bug数据太多时
+           if( res instanceof IPage){
+
+               Log newLog = Log.builder().createTime(LocalDateTime.now())
+                       .costTime(costTime).requestUri(request.getRequestURI())
+                       .status(RequestStatus.SUCCESS)
+                       .response(om.writeValueAsString(((IPage<?>) res).getRecords()))
+                       .request(requestDataString)
+                       .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
+               logDao.insert(newLog);
+
+           }else{
+               Log newLog = Log.builder().createTime(LocalDateTime.now())
+                       .costTime(costTime).requestUri(request.getRequestURI())
+                       .status(RequestStatus.SUCCESS)
+                       .response(om.writeValueAsString(res))
+                       .request(requestDataString)
+                       .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
+               logDao.insert(newLog);
+           }
+
+
+
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();

@@ -26,12 +26,11 @@ public class LogService {
                            LocalDateTime startDateTime,
                            LocalDateTime endDateTime) {
 
-        IPage<Log> pageParam = new Page(page != null ? page : 1,
-                size != null ? size : 10);
-        LambdaQueryWrapper<Log> eq = Wrappers.lambdaQuery(Log.class)
-                .eq(Log::getId, 1);
+        IPage<Log> pageParam = new Page(page, size);
+        LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class)
+                .orderByDesc(Log::getCreateTime);
 
 
-        return null;
+        return logDao.selectPage(pageParam, qr);
     }
 }
