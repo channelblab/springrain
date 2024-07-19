@@ -34,7 +34,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void add(@PathVariable @NotBlank String id) {
+    public void delete(@PathVariable @NotBlank String id) {
 
     }
 

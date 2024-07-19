@@ -2,6 +2,7 @@ package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.channelblab.springrain.common.enums.RequestStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.Builder;
 import lombok.Data;
@@ -23,9 +24,11 @@ public class Log {
     private String userId;
     private String sourceIp;
     private String requestUri;
+    private String name;
     private RequestStatus status;
     private String request;
     private String response;
     private Long costTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 }

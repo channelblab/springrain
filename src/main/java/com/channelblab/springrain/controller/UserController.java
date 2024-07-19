@@ -1,14 +1,13 @@
 package com.channelblab.springrain.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.channelblab.springrain.model.Log;
+import com.channelblab.springrain.model.Permission;
+import com.channelblab.springrain.model.User;
 import com.channelblab.springrain.service.LogService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -22,10 +21,24 @@ public class UserController {
     @Autowired
     private LogService logService;
 
-    @GetMapping("/page")
-    public IPage<Log> page(Integer page, Integer size,
-                           LocalDateTime startDateTime,
-                           LocalDateTime endDateTime) {
-        return logService.page(page, size, startDateTime, endDateTime);
+//    @GetMapping("/page")
+//    public IPage<Log> page(Integer page, Integer size,
+//                           LocalDateTime startDateTime,
+//                           LocalDateTime endDateTime) {
+//        return logService.page(userId, page, size, startDateTime, endDateTime);
+//    }
+
+
+    @GetMapping("/userPermission")
+    public List<Permission> userPermission() {
+        return null;
+
+    }
+
+    @ApiOperation("用户名密码登录")
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        return null;
+
     }
 }

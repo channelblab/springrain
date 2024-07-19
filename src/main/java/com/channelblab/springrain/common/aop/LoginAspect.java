@@ -2,11 +2,15 @@ package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.common.exception.BusinessException;
+import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.common.utils.AnnotationUtil;
+import com.channelblab.springrain.common.utils.UserUtil;
+import com.channelblab.springrain.model.User;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.core.annotation.Order;
@@ -35,7 +39,7 @@ public class LoginAspect {
     }
 
     @Before("execution(* *..controller.*..*(..))")
-    public void doLimit(JoinPoint joinPoint) throws NoSuchMethodException {
+    public void doValidate(JoinPoint joinPoint) throws NoSuchMethodException {
         if (AnnotationUtil.containAnnotation(joinPoint, NoLogin.class)) {
             return;
         }
@@ -47,6 +51,13 @@ public class LoginAspect {
                     "login_expire");
         }
         //todo
+        User user = UserUtil.decToken(token);
+        UserHolder.setUser(user);
+    }
+
+    @After("execution(* *..controller.*..*(..))")
+    public void clearUserHolder() {
+        UserHolder.remove();
     }
 
 }

@@ -2,6 +2,7 @@ package com.channelblab.springrain.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.common.anotations.NoAuth;
+import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.model.Permission;
 import com.channelblab.springrain.service.PermissionService;
@@ -22,7 +23,7 @@ import java.util.List;
  * @description：
  * @modified By：
  */
-@Api(value = "dd",tags = "dd1")
+@Api(value = "dd", tags = "dd1")
 @RestController
 @RequestMapping("/permission")
 public class PermissionController {
@@ -31,13 +32,15 @@ public class PermissionController {
     private PermissionService permissionService;
 
 
+    @NoLog
     @GetMapping("/page")
     public IPage<Permission> page(Integer page, Integer size) {
         return permissionService.page(page, size);
     }
 
 
-    @ApiOperation(value = "eeee",notes ="dfddddddfffffffffff" )
+
+    @ApiOperation(value = "权限树", notes = "dfddddddfffffffffff")
     @NoLogin
     @NoAuth
     @GetMapping("/tree")

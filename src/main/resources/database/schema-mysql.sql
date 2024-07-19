@@ -3,8 +3,9 @@ CREATE TABLE `system_multilingual` (
                                        `lang` varchar(100) NOT NULL,
                                        `symbol` varchar(200) NOT NULL,
                                        `value` varchar(255) NOT NULL,
+                                       `describe` varchar(255) NOT NULL,
                                        PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `system_log` (
                               `id` varchar(100) NOT NULL,
@@ -16,6 +17,7 @@ CREATE TABLE `system_log` (
                               `response` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
                               `cost_time` int NOT NULL,
                               `create_time` datetime NOT NULL,
+                              `name` varchar(255) DEFAULT NULL,
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

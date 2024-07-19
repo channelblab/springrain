@@ -1,13 +1,13 @@
 package com.channelblab.springrain.common.aop;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.enums.RequestStatus;
+import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.IpUtil;
 import com.channelblab.springrain.dao.LogDao;
 import com.channelblab.springrain.model.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import io.swagger.annotations.ApiOperation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -26,6 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 从设计原理上来说，日志只应该记录一些危险操作。
+ * 由于分页等查询操作数据量大，也不适合做日志记录，因为数据会累积，累积几次以后就会触及数据库等的一次性数据传输限制
+ * 因此建议将分页查询等大数据量接口进行非日志记录过滤
+ *
+ *
+ *
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2024-05-22 14:45
  * @description：
@@ -35,13 +41,6 @@ import java.util.Map;
 @Aspect
 @Component
 public class LogAspect {
-    private static final Integer EXPIRE_MILLION_SECONDS = 1000;
-    private static Cache<Object, Object> cache;
-
-    static {
-        cache = Caffeine.newBuilder().build();
-    }
-
     @Autowired
     private LogDao logDao;
     @Autowired
@@ -49,6 +48,9 @@ public class LogAspect {
 
     @Around("execution(* *..controller.*..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
+        if (AnnotationUtil.containAnnotation(joinPoint, NoLog.class)) {
+            return joinPoint.proceed();
+        }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String method = request.getMethod();
@@ -62,33 +64,26 @@ public class LogAspect {
         Object res;
         long startTimeMillis = System.currentTimeMillis();
         long endTimeMillis;
+
+        String apiName = null;
+        Object annotation = AnnotationUtil.getAnnotation(joinPoint,
+                ApiOperation.class);
+        if (annotation != null) {
+            ApiOperation apiOperation = (ApiOperation) annotation;
+            apiName = apiOperation.value();
+        }
         try {
             res = joinPoint.proceed();
             endTimeMillis = System.currentTimeMillis();
             long costTime = endTimeMillis - startTimeMillis;
-            //todo 这里有bug数据太多时
-           if( res instanceof IPage){
-
-               Log newLog = Log.builder().createTime(LocalDateTime.now())
-                       .costTime(costTime).requestUri(request.getRequestURI())
-                       .status(RequestStatus.SUCCESS)
-                       .response(om.writeValueAsString(((IPage<?>) res).getRecords()))
-                       .request(requestDataString)
-                       .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
-               logDao.insert(newLog);
-
-           }else{
-               Log newLog = Log.builder().createTime(LocalDateTime.now())
-                       .costTime(costTime).requestUri(request.getRequestURI())
-                       .status(RequestStatus.SUCCESS)
-                       .response(om.writeValueAsString(res))
-                       .request(requestDataString)
-                       .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
-               logDao.insert(newLog);
-           }
-
-
-
+            Log newLog = Log.builder().createTime(LocalDateTime.now())
+                    .costTime(costTime).requestUri(request.getRequestURI())
+                    .status(RequestStatus.SUCCESS)
+                    .response(om.writeValueAsString(res))
+                    .request(requestDataString)
+                    .name(apiName)
+                    .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
+            logDao.insert(newLog);
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();
@@ -98,6 +93,7 @@ public class LogAspect {
                     .status(RequestStatus.FAIL)
                     .response(om.writeValueAsString(throwable.getMessage()))
                     .request(requestDataString)
+                    .name(apiName)
                     .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
             logDao.insert(newLog);
             throw throwable;

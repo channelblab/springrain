@@ -21,4 +21,7 @@ public class Multilingual {
     private String lang;
     private String symbol;
     private String value;
+
+    //关于当前字段的描述
+    private String describe;
 }

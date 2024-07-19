@@ -1,6 +1,7 @@
 package com.channelblab.springrain.controller;
 
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.io.IOException;
  * @description：
  * @modified By：
  */
+@Api(tags = "多语言接口")
 @RestController
 @RequestMapping("/multilingual")
 public class MultilingualController {
@@ -24,4 +26,12 @@ public class MultilingualController {
     public void exportTemplate(HttpServletResponse response) throws IOException {
         response.getWriter().write("");
     }
+
+    @NoResponseHandle
+    @GetMapping("/importt")
+    public void importt(HttpServletResponse response) throws IOException {
+        response.getWriter().write("");
+    }
+
+
 }

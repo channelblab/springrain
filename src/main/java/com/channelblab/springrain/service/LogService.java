@@ -8,6 +8,7 @@ import com.channelblab.springrain.dao.LogDao;
 import com.channelblab.springrain.model.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 
@@ -22,15 +23,13 @@ public class LogService {
     @Autowired
     private LogDao logDao;
 
-    public IPage<Log> page(Integer page, Integer size,
-                           LocalDateTime startDateTime,
-                           LocalDateTime endDateTime) {
-
-        IPage<Log> pageParam = new Page(page, size);
+    public IPage<Log> page(String userId, Integer page, Integer size, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        IPage<Log> pageParam = new Page<>(page, size);
         LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class)
+                .eq(!ObjectUtils.isEmpty(userId), Log::getUserId, userId)
+                .ge(startDateTime != null, Log::getCreateTime, startDateTime)
+                .le(endDateTime != null, Log::getCreateTime, endDateTime)
                 .orderByDesc(Log::getCreateTime);
-
-
         return logDao.selectPage(pageParam, qr);
     }
 }

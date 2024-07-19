@@ -36,6 +36,12 @@ public class AnnotationUtil {
         return false;
     }
 
+    public static Object getAnnotation(JoinPoint joinPoint,
+                                       Class clazz) throws NoSuchMethodException {
+        Method method = getMethodFromJoinPoint(joinPoint);
+        return method.getAnnotation(clazz);
+    }
+
 
     private static Method getMethodFromJoinPoint(
             JoinPoint joinPoint) throws NoSuchMethodException {
