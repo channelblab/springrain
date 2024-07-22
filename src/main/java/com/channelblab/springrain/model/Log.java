@@ -3,7 +3,7 @@ package com.channelblab.springrain.model;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.channelblab.springrain.common.enums.RequestStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
-@ApiModel
+@Schema
 @TableName("system_log")
 public class Log {
     private String id;

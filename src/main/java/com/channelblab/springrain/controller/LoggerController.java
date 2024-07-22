@@ -1,6 +1,6 @@
 package com.channelblab.springrain.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description：log controller
  * @modified By：
  */
-@Api(tags = "系统日志接口")
+@Tag(name = "框架-系统日志接口")
 @RestController
 @RequestMapping("/logger")
 public class LoggerController {

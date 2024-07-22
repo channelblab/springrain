@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @description：标准返回处理类
  * @modified By：
  */
-@Component
 @RestControllerAdvice
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
     @Autowired
@@ -40,7 +38,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
         // 排除 Swagger 的接口路径
         AntPathMatcher matcher = new AntPathMatcher();
 
-        if (path.startsWith("/swagger") || path.startsWith("/v2/api-docs") || path.startsWith("/v3/api-docs")) {
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
             return body;
         }
 

@@ -1,7 +1,7 @@
 package com.channelblab.springrain.controller;
 
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +15,7 @@ import java.io.IOException;
  * @description：
  * @modified By：
  */
-@Api(tags = "多语言接口")
+@Tag(name = "框架-多语言接口")
 @RestController
 @RequestMapping("/multilingual")
 public class MultilingualController {

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
@@ -20,7 +19,6 @@ import java.util.List;
  * @modified By：
  */
 @Configuration
-@EnableSwagger2
 @MapperScan(basePackages = "com.channelblab.springrain.dao")
 @ComponentScan(basePackages = "com.channelblab.springrain")
 public class SpringRainApplication {

@@ -5,8 +5,8 @@ import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.model.Log;
 import com.channelblab.springrain.service.LogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
  * @description：log controller
  * @modified By：
  */
-@Api(tags = "操作日志接口")
+@Tag(name = "框架-操作日志接口")
 @RestController
 @RequestMapping("/log")
 public class LogController {
@@ -32,7 +32,7 @@ public class LogController {
     private LogService logService;
 
     @NoLog
-    @ApiOperation("分页查询")
+    @Operation(summary = "分页查询")
     @GetMapping("/page")
     public IPage<Log> page(@RequestParam(required = false) String userId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
@@ -41,7 +41,7 @@ public class LogController {
     }
 
 
-    @ApiOperation("导出操作日志")
+    @Operation(summary = "导出操作日志")
     @NoResponseHandle
     @GetMapping("/export")
     public void exportTemplate(HttpServletResponse response) throws IOException {

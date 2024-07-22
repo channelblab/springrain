@@ -6,5 +6,6 @@ package com.channelblab.springrain.common.disruptor;
  * @description：
  * @modified By：
  */
-public class EventType {
+public enum EventType {
+    LOG
 }

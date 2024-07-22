@@ -9,7 +9,7 @@ import com.channelblab.springrain.dao.LogDao;
 import com.channelblab.springrain.model.Log;
 import com.channelblab.springrain.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -68,10 +68,10 @@ public class LogAspect {
         long endTimeMillis;
 
         String apiName = null;
-        Object annotation = AnnotationUtil.getAnnotation(joinPoint, ApiOperation.class);
+        Object annotation = AnnotationUtil.getAnnotation(joinPoint, Operation.class);
         if (annotation != null) {
-            ApiOperation apiOperation = (ApiOperation) annotation;
-            apiName = apiOperation.value();
+            Operation apiOperation = (Operation) annotation;
+            apiName = apiOperation.summary();
         }
         User user = UserHolder.getUser();
         try {
