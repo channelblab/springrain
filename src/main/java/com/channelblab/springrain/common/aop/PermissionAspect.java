@@ -36,13 +36,18 @@ public class PermissionAspect {
     private PermissionService permissionService;
 
     @Before("execution(* *..controller.*..*(..))")
-    public void doLimit(JoinPoint joinPoint) throws Throwable {
+    public void doPermission(JoinPoint joinPoint) throws Throwable {
         if (AnnotationUtil.containAnnotation(joinPoint, NoAuth.class)) {
             return;
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String requestURI = request.getRequestURI();
+        if (UserHolder.getUser() == null) {
+            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
+
+        }
+
         List<Permission> permissions = permissionService.selectAllPermission(UserHolder.getUser().getId());
         if (permissions == null) {
             throw new BusinessException("permission_not_config");

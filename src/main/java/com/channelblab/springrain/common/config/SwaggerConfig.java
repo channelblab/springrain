@@ -17,12 +17,6 @@ import static org.springdoc.core.Constants.ALL_PATTERN;
 public class SwaggerConfig {
     @Bean
     public GroupedOpenApi actuatorApi() {
-        return GroupedOpenApi.builder()
-                .group("Actuator")
-                .pathsToMatch(ALL_PATTERN)
-                .addOpenApiCustomiser(openApi -> openApi.info(new Info().title("Actuator API").version("1.0")))
-                .pathsToExclude("/rest/actuator/health/**")
-                .pathsToExclude("/rest/actuator/health/*")
-                .build();
+        return GroupedOpenApi.builder().group("Actuator").pathsToMatch(ALL_PATTERN).addOpenApiCustomiser(openApi -> openApi.info(new Info().title("API文档").version("1.0.0"))).build();
     }
 }

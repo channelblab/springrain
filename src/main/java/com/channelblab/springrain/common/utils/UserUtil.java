@@ -49,7 +49,7 @@ public class UserUtil {
         Object ifPresent = getCaffeine().getIfPresent(token);
         if (ifPresent == null) {
             //未登录或者登录过期
-            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "登录过期");
+            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
         return (User) ifPresent;
     }
