@@ -12,9 +12,10 @@ public interface Response {
 
     Integer SUCCESS_CODE = 1;//成功code
     Integer LOGIN_EXPIRE_CODE = 2;//未登录或登录过期code
-    Integer RATE_LIMIT_CODE = 3;//限流code
-    Integer NO_PERMISSION = 4;//无权限
-    Integer ERROR_CODE = 5;//通用异常code
+    Integer USERNAME_PASSWORD_ERROR_CODE = 3;//用户名密码错误
+    Integer RATE_LIMIT_CODE = 4;//限流code
+    Integer NO_PERMISSION = 5;//无权限
+    Integer COMMON_ERROR_CODE = 6;//通用异常code
 
 
     /**

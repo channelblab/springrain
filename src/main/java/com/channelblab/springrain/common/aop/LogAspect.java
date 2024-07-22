@@ -2,10 +2,12 @@ package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.enums.RequestStatus;
+import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.IpUtil;
 import com.channelblab.springrain.dao.LogDao;
 import com.channelblab.springrain.model.Log;
+import com.channelblab.springrain.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -66,35 +68,26 @@ public class LogAspect {
         long endTimeMillis;
 
         String apiName = null;
-        Object annotation = AnnotationUtil.getAnnotation(joinPoint,
-                ApiOperation.class);
+        Object annotation = AnnotationUtil.getAnnotation(joinPoint, ApiOperation.class);
         if (annotation != null) {
             ApiOperation apiOperation = (ApiOperation) annotation;
             apiName = apiOperation.value();
         }
+        User user = UserHolder.getUser();
         try {
             res = joinPoint.proceed();
             endTimeMillis = System.currentTimeMillis();
             long costTime = endTimeMillis - startTimeMillis;
-            Log newLog = Log.builder().createTime(LocalDateTime.now())
-                    .costTime(costTime).requestUri(request.getRequestURI())
-                    .status(RequestStatus.SUCCESS)
-                    .response(om.writeValueAsString(res))
-                    .request(requestDataString)
-                    .name(apiName)
-                    .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
+            Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS).response(om.writeValueAsString(res))
+                    .request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId()).build();
             logDao.insert(newLog);
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();
             long costTime = endTimeMillis - startTimeMillis;
-            Log newLog = Log.builder().createTime(LocalDateTime.now())
-                    .costTime(costTime).requestUri(request.getRequestURI())
-                    .status(RequestStatus.FAIL)
-                    .response(om.writeValueAsString(throwable.getMessage()))
-                    .request(requestDataString)
-                    .name(apiName)
-                    .sourceIp(IpUtil.remoteIP(request)).userId("0000").build();
+            Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.FAIL)
+                    .response(om.writeValueAsString(throwable.getMessage())).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId())
+                    .build();
             logDao.insert(newLog);
             throw throwable;
         }
@@ -116,8 +109,7 @@ public class LogAspect {
         return parameters;
     }
 
-    private String getRequestBody(
-            ProceedingJoinPoint joinPoint) throws IOException {
+    private String getRequestBody(ProceedingJoinPoint joinPoint) throws IOException {
 
         ObjectMapper om = new ObjectMapper();
 

@@ -1,7 +1,9 @@
 package com.channelblab.springrain.common.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -17,9 +19,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOriginPatterns("*")
-                .allowedMethods("*").allowCredentials(true).maxAge(3600)
-                .allowedHeaders("*");
+        registry.addMapping("/**").allowedOriginPatterns("*").allowedMethods("*").allowCredentials(true).maxAge(3600).allowedHeaders("*");
     }
 
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setPathMatcher(new AntPathMatcher());
+    }
 }

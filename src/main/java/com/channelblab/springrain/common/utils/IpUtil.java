@@ -21,26 +21,22 @@ public class IpUtil {
         //X-Forwarded-For：Squid 服务代理
         String ipAddresses = request.getHeader("X-Forwarded-For");
 
-        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(
-                ipAddresses)) {
+        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
             //Proxy-Client-IP：apache 服务代理
             ipAddresses = request.getHeader("Proxy-Client-IP");
         }
 
-        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(
-                ipAddresses)) {
+        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
             //WL-Proxy-Client-IP：weblogic 服务代理
             ipAddresses = request.getHeader("WL-Proxy-Client-IP");
         }
 
-        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(
-                ipAddresses)) {
+        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
             //HTTP_CLIENT_IP：有些代理服务器
             ipAddresses = request.getHeader("HTTP_CLIENT_IP");
         }
 
-        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(
-                ipAddresses)) {
+        if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
             //X-Real-IP：nginx服务代理
             ipAddresses = request.getHeader("X-Real-IP");
         }
@@ -51,8 +47,7 @@ public class IpUtil {
         }
 
         //还是不能获取到，最后再通过request.getRemoteAddr();获取
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(
-                ipAddresses)) {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
             ip = request.getRemoteAddr();
         }
         return ip;
@@ -93,10 +88,8 @@ public class IpUtil {
      * @param ni 网卡
      * @return 如果满足要求则true，否则false
      */
-    private static boolean isValidInterface(
-            NetworkInterface ni) throws SocketException {
-        return !ni.isLoopback() && !ni.isPointToPoint() && ni.isUp() && !ni.isVirtual() && (ni.getName()
-                .startsWith("eth") || ni.getName().startsWith("ens"));
+    private static boolean isValidInterface(NetworkInterface ni) throws SocketException {
+        return !ni.isLoopback() && !ni.isPointToPoint() && ni.isUp() && !ni.isVirtual() && (ni.getName().startsWith("eth") || ni.getName().startsWith("ens"));
     }
 
     /**
@@ -134,8 +127,7 @@ public class IpUtil {
             if (ipBySocketOpt.isPresent()) {
                 return ipBySocketOpt;
             } else {
-                return inet4Addresses.isEmpty() ? Optional.empty() : Optional.of(
-                        inet4Addresses.get(0));
+                return inet4Addresses.isEmpty() ? Optional.empty() : Optional.of(inet4Addresses.get(0));
             }
         }
         return Optional.of(inet4Addresses.get(0));

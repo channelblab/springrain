@@ -21,7 +21,7 @@ public class BusinessException extends RuntimeException {
 
     public BusinessException(String message) {
         super(message);
-        this.code = Response.ERROR_CODE;
+        this.code = Response.COMMON_ERROR_CODE;
         this.message = message;
     }
 

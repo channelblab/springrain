@@ -31,6 +31,11 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
+    public static void main(String[] args) {
+        AntPathMatcher matcher = new AntPathMatcher();
+        boolean match = matcher.match("/api/**", "/api/v1/resource");
+        System.out.println(match);
+    }
 
     @NoLog
     @GetMapping("/page")
@@ -38,20 +43,12 @@ public class PermissionController {
         return permissionService.page(page, size);
     }
 
-
-
     @ApiOperation(value = "权限树", notes = "dfddddddfffffffffff")
     @NoLogin
     @NoAuth
     @GetMapping("/tree")
     public List<Permission> tree() {
         return permissionService.tree();
-    }
-
-    public static void main(String[] args) {
-        AntPathMatcher matcher = new AntPathMatcher();
-        boolean match = matcher.match("/api/**", "/api/v1/resource");
-        System.out.println(match);
     }
 
 }

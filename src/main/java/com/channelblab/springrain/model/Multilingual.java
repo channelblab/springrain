@@ -20,8 +20,8 @@ public class Multilingual {
     private String id;
     private String lang;
     private String symbol;
-    private String value;
+    private String symbolValue;
 
     //关于当前字段的描述
-    private String describe;
+    private String symbolDescribe;
 }

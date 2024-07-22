@@ -24,22 +24,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RestControllerAdvice
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
     @Autowired
-    private  ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
 
     @Override
-    public boolean supports(MethodParameter returnType,
-                            Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return !returnType.hasMethodAnnotation(NoResponseHandle.class);
     }
 
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType,
-                                  MediaType selectedContentType,
-                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  ServerHttpRequest request,
-                                  ServerHttpResponse response) {
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
+            ServerHttpResponse response) {
         String path = request.getURI().getPath();
         // 排除 Swagger 的接口路径
         AntPathMatcher matcher = new AntPathMatcher();
@@ -49,7 +45,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
         }
 
 
-        if (body instanceof Response ) {
+        if (body instanceof Response) {
             return body;
         } else if (body instanceof String) {
             //特殊处理string返回类型
@@ -67,7 +63,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
                 @Override
                 public String getMessage() {
                     //todo 是否需要多语言处理
-//                    return I18nMessageUtil.get("system.operation.success");
+                    //                    return I18nMessageUtil.get("system.operation.success");
                     return "操作成功";
                 }
 
@@ -97,7 +93,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
                 @Override
                 public String getMessage() {
                     //todo 是否需要多语言处理
-//                    return I18nMessageUtil.get("system.operation.success");
+                    //                    return I18nMessageUtil.get("system.operation.success");
                     return "操作成功";
                 }
 

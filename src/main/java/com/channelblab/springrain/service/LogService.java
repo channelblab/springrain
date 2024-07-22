@@ -25,11 +25,8 @@ public class LogService {
 
     public IPage<Log> page(String userId, Integer page, Integer size, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         IPage<Log> pageParam = new Page<>(page, size);
-        LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class)
-                .eq(!ObjectUtils.isEmpty(userId), Log::getUserId, userId)
-                .ge(startDateTime != null, Log::getCreateTime, startDateTime)
-                .le(endDateTime != null, Log::getCreateTime, endDateTime)
-                .orderByDesc(Log::getCreateTime);
+        LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class).eq(!ObjectUtils.isEmpty(userId), Log::getUserId, userId).ge(startDateTime != null, Log::getCreateTime, startDateTime)
+                .le(endDateTime != null, Log::getCreateTime, endDateTime).orderByDesc(Log::getCreateTime);
         return logDao.selectPage(pageParam, qr);
     }
 }

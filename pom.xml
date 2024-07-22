@@ -112,6 +112,12 @@
             <version>2.17.2</version>
         </dependency>
 
+        <dependency>
+            <artifactId>jbcrypt</artifactId>
+            <groupId>org.mindrot</groupId>
+            <version>0.4</version>
+        </dependency>
+
 
 
     </dependencies>

@@ -14,41 +14,29 @@ import java.util.Arrays;
  */
 public class AnnotationUtil {
 
-    public static boolean containAnnotation(JoinPoint joinPoint,
-                                            Class clazz) throws NoSuchMethodException {
+    public static boolean containAnnotation(JoinPoint joinPoint, Class clazz) throws NoSuchMethodException {
 
         Method method = getMethodFromJoinPoint(joinPoint);
         // 获取类上的注解
-        Annotation[] classAnnotations = method.getDeclaringClass()
-                .getAnnotations();
-        if (Arrays.stream(classAnnotations).anyMatch(
-                annotation -> annotation.annotationType().equals(clazz))) {
+        Annotation[] classAnnotations = method.getDeclaringClass().getAnnotations();
+        if (Arrays.stream(classAnnotations).anyMatch(annotation -> annotation.annotationType().equals(clazz))) {
             return true;
         }
         // 获取方法上的注解
         Annotation[] methodAnnotations = method.getAnnotations();
-        if (Arrays.stream(methodAnnotations).anyMatch(
-                annotation -> annotation.annotationType().equals(clazz))) {
-            return true;
-        }
-
-
-        return false;
+        return Arrays.stream(methodAnnotations).anyMatch(annotation -> annotation.annotationType().equals(clazz));
     }
 
-    public static Object getAnnotation(JoinPoint joinPoint,
-                                       Class clazz) throws NoSuchMethodException {
+    public static Object getAnnotation(JoinPoint joinPoint, Class clazz) throws NoSuchMethodException {
         Method method = getMethodFromJoinPoint(joinPoint);
         return method.getAnnotation(clazz);
     }
 
 
-    private static Method getMethodFromJoinPoint(
-            JoinPoint joinPoint) throws NoSuchMethodException {
+    private static Method getMethodFromJoinPoint(JoinPoint joinPoint) throws NoSuchMethodException {
         String methodName = joinPoint.getSignature().getName();
         Class<?>[] parameterTypes = ((org.aspectj.lang.reflect.MethodSignature) joinPoint.getSignature()).getParameterTypes();
-        return joinPoint.getTarget().getClass()
-                .getMethod(methodName, parameterTypes);
+        return joinPoint.getTarget().getClass().getMethod(methodName, parameterTypes);
     }
 
 

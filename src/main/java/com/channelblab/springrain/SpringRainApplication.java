@@ -30,8 +30,6 @@ public class SpringRainApplication {
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
-        System.err.println("-------------------");
-
         List<Multilingual> multilingualList = multilingualDao.selectList(null);
         MultilingualUtil.updateData(multilingualList);
 

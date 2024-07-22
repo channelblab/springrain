@@ -24,37 +24,28 @@ public class PermissionService {
     private PermissionDao permissionDao;
 
     public IPage<Permission> page(Integer page, Integer size) {
-        IPage<Permission> pageParam = new Page<>(page == null ? 1 : page,
-                size == null ? 10 : size);
+        IPage<Permission> pageParam = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
         return permissionDao.selectPage(pageParam, null);
     }
 
     public List<Permission> tree() {
         List<Permission> allPermissions = permissionDao.selectList(null);
         for (Permission allPermission : allPermissions) {
-            allPermission.setName(
-                    MultilingualUtil.getValue(allPermission.getName()));
+            allPermission.setName(MultilingualUtil.getValue(allPermission.getName()));
         }
 
 
-        List<Permission> firstPermissions = allPermissions.stream()
-                .filter(k -> k.getParentId() == null)
-                .collect(Collectors.toList());
+        List<Permission> firstPermissions = allPermissions.stream().filter(k -> k.getParentId() == null).collect(Collectors.toList());
 
-        List<Permission> subPermissions = allPermissions.stream()
-                .filter(k -> k.getParentId() != null)
-                .collect(Collectors.toList());
+        List<Permission> subPermissions = allPermissions.stream().filter(k -> k.getParentId() != null).collect(Collectors.toList());
         for (Permission firstPermission : firstPermissions) {
             iterSub(firstPermission, subPermissions);
         }
         return firstPermissions;
     }
 
-    private void iterSub(Permission firstPermission,
-                         List<Permission> allPermissions) {
-        List<Permission> child = allPermissions.stream()
-                .filter(k -> k.getParentId().equals(firstPermission.getId()))
-                .collect(Collectors.toList());
+    private void iterSub(Permission firstPermission, List<Permission> allPermissions) {
+        List<Permission> child = allPermissions.stream().filter(k -> k.getParentId().equals(firstPermission.getId())).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(child)) {
             firstPermission.setChildren(child);
             for (Permission permission : child) {
@@ -63,5 +54,9 @@ public class PermissionService {
 
         }
 
+    }
+
+    public List<Permission> selectAllPermission(String userId) {
+        return permissionDao.selectAllPermissionByUserId(userId);
     }
 }

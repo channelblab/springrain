@@ -8,6 +8,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -24,9 +26,7 @@ public class UserUtil {
     static Cache<Object, Object> cache;
 
     static {
-        cache = Caffeine.newBuilder()
-                .expireAfterAccess(Duration.ofSeconds(LOGIN_EXPIRE_SECONDS))
-                .build();
+        cache = Caffeine.newBuilder().expireAfterAccess(Duration.ofSeconds(LOGIN_EXPIRE_SECONDS)).build();
     }
 
     private static Cache<Object, Object> getCaffeine() {
@@ -55,11 +55,23 @@ public class UserUtil {
     }
 
     public static void kickOut(String userId) {
-//        Object ifPresent = getCaffeine().getIfPresent(token);
-//        if (ifPresent == null) {
-//            //未登录或者登录过期
-//            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "登录过期");
-//        }
+        Cache<Object, Object> caffeine = getCaffeine();
+        for (Object key : caffeine.asMap().keySet()) {
+            User u = (User) caffeine.getIfPresent(key);
+            if (u.equals(userId)) {
+                caffeine.invalidate(key);
+            }
+        }
+    }
+
+    public static List<User> onlineUsers() {
+        List<User> onlineUsers = new ArrayList<>();
+        Cache<Object, Object> caffeine = getCaffeine();
+        for (Object key : caffeine.asMap().keySet()) {
+            User u = (User) caffeine.getIfPresent(key);
+            onlineUsers.add(u);
+        }
+        return onlineUsers;
     }
 
 }

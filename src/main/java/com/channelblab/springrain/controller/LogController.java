@@ -2,7 +2,6 @@ package com.channelblab.springrain.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.common.anotations.NoLog;
-import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.model.Log;
 import com.channelblab.springrain.service.LogService;
@@ -32,16 +31,12 @@ public class LogController {
     @Autowired
     private LogService logService;
 
-
     @NoLog
-    @NoLogin
     @ApiOperation("分页查询")
     @GetMapping("/page")
-    public IPage<Log> page(@RequestParam(required = false) String userId,
-                           @RequestParam(defaultValue = "1") Integer page,
-                           @RequestParam(defaultValue = "10") Integer size,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDateTime) {
+    public IPage<Log> page(@RequestParam(required = false) String userId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDateTime) {
         return logService.page(userId, page, size, startDateTime, endDateTime);
     }
 

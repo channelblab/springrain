@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
  * @modified By：
  */
 public class MultilingualUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-            MultilingualUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultilingualUtil.class);
 
     private static Cache<Object, Object> cache;
 
@@ -29,12 +28,9 @@ public class MultilingualUtil {
     }
 
     public static String getValue(String symbol) {
-        String language = LocaleContextHolder.getLocale()
-                .getLanguage() + "_" + LocaleContextHolder.getLocale()
-                .getCountry();
+        String language = LocaleContextHolder.getLocale().getLanguage() + "_" + LocaleContextHolder.getLocale().getCountry();
 
-        List<Multilingual> multilingualList = (List<Multilingual>) cache.getIfPresent(
-                language);
+        List<Multilingual> multilingualList = (List<Multilingual>) cache.getIfPresent(language);
         if (multilingualList == null) {
             LOGGER.warn("多语言数据未初始化，多语言key为:{}", symbol);
             return symbol;
@@ -44,9 +40,7 @@ public class MultilingualUtil {
             return symbol;
         }
         //查找对应的value
-        Optional<String> firstValue = multilingualList.stream()
-                .filter(m -> m.getSymbol().equals(symbol))
-                .map(Multilingual::getValue).findFirst();
+        Optional<String> firstValue = multilingualList.stream().filter(m -> m.getSymbol().equals(symbol)).map(Multilingual::getSymbolValue).findFirst();
         if (firstValue.isPresent()) {
             return firstValue.get();
         } else {
@@ -58,13 +52,7 @@ public class MultilingualUtil {
     }
 
     public static void updateData(List<Multilingual> multilingualList) {
-
-        Map<String, List<Multilingual>> groupedByLang = multilingualList.stream()
-                .collect(Collectors.groupingBy(Multilingual::getLang));
-        groupedByLang.forEach((lang, list) -> {
-            cache.put(lang, list);
-        });
-
-
+        Map<String, List<Multilingual>> groupedByLang = multilingualList.stream().collect(Collectors.groupingBy(Multilingual::getLang));
+        groupedByLang.forEach((lang, list) -> cache.put(lang, list));
     }
 }

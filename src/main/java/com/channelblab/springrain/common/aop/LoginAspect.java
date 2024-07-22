@@ -47,10 +47,8 @@ public class LoginAspect {
         HttpServletRequest request = requestAttributes.getRequest();
         String token = request.getHeader("token");
         if (ObjectUtils.isEmpty(token)) {
-            throw new BusinessException(Response.LOGIN_EXPIRE_CODE,
-                    "login_expire");
+            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
-        //todo
         User user = UserUtil.decToken(token);
         UserHolder.setUser(user);
     }

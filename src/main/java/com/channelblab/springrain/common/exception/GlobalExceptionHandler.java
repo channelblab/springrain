@@ -22,8 +22,7 @@ import java.util.Map;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-            GlobalExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 统一处理未特殊定义的异常
@@ -42,7 +41,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public Integer getCode() {
-                return ERROR_CODE;
+                return COMMON_ERROR_CODE;
             }
 
             @Override
@@ -121,7 +120,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public Integer getCode() {
-                return ERROR_CODE;
+                return COMMON_ERROR_CODE;
             }
 
             @Override
@@ -142,30 +141,30 @@ public class GlobalExceptionHandler {
      * @param me 参数异常类
      * @return
      */
-//    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-//    public Response methodException(Exception me) {
-//        return new Response() {
-//            @Override
-//            public Boolean getStatus() {
-//                return false;
-//            }
-//
-//            @Override
-//            public Integer getCode() {
-//                return ERROR_CODE;
-//            }
-//
-//            @Override
-//            public String getMessage() {
-//                return me.getMessage();
-//            }
-//
-//            @Override
-//            public Object getData() {
-//                return null;
-//            }
-//        };
-//    }
+    //    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    //    public Response methodException(Exception me) {
+    //        return new Response() {
+    //            @Override
+    //            public Boolean getStatus() {
+    //                return false;
+    //            }
+    //
+    //            @Override
+    //            public Integer getCode() {
+    //                return ERROR_CODE;
+    //            }
+    //
+    //            @Override
+    //            public String getMessage() {
+    //                return me.getMessage();
+    //            }
+    //
+    //            @Override
+    //            public Object getData() {
+    //                return null;
+    //            }
+    //        };
+    //    }
 
 
 }

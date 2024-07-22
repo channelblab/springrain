@@ -16,14 +16,11 @@ import java.util.List;
 @Data
 @TableName("perm_permission")
 public class Permission {
+    @TableField(exist = false)
+    List<Permission> children;
     private String id;
     private PermissionType type;
     private String name;
-
     private String uris;
-
     private String parentId;
-
-    @TableField(exist = false)
-    List<Permission> children;
 }

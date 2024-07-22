@@ -30,39 +30,14 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         List<RequestParameter> list = new ArrayList<>();
-        list.add(
-                new RequestParameterBuilder()
-                        .name("token")
-                        .description("token")
-                        .in(ParameterType.HEADER)
-                        .build());
-        list.add(
-                new RequestParameterBuilder()
-                        .name("factoryId")
-                        .description("factoryId")
-                        .in(ParameterType.HEADER)
-                        .build());
-        list.add(
-                new RequestParameterBuilder()
-                        .name("lang")
-                        .description("language")
-                        .in(ParameterType.HEADER)
-                        .build());
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .globalRequestParameters(list)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.regex("(?!/error.*).*"))
+        list.add(new RequestParameterBuilder().name("token").description("token").in(ParameterType.HEADER).build());
+        list.add(new RequestParameterBuilder().name("factoryId").description("factoryId").in(ParameterType.HEADER).build());
+        list.add(new RequestParameterBuilder().name("lang").description("language").in(ParameterType.HEADER).build());
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).globalRequestParameters(list).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.regex("(?!/error.*).*"))
                 .build();
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("考勤结薪系统API文档")
-                .description("考勤结薪系统API文档")
-                .contact(new Contact("邓艺", "", "yi.deng@minthgroup.com"))
-                .version("1.0.0")
-                .build();
+        return new ApiInfoBuilder().title("考勤结薪系统API文档").description("考勤结薪系统API文档").contact(new Contact("邓艺", "", "yi.deng@minthgroup.com")).version("1.0.0").build();
     }
 }

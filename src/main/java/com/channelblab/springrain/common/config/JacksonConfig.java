@@ -11,8 +11,6 @@ public class JacksonConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return Jackson2ObjectMapperBuilder.json()
-                .modules(new JavaTimeModule())
-                .build();
+        return Jackson2ObjectMapperBuilder.json().modules(new JavaTimeModule()).build();
     }
 }
