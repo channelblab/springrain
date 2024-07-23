@@ -34,6 +34,7 @@ public class UserUtil {
     }
 
     public static String genToken(User user) {
+        kickOut(user.getId());
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         getCaffeine().put(uuid, user);
         return uuid;

@@ -16,4 +16,5 @@
         WHERE perm_user_role.user_id = #{userId}
 
     </select>
+
 </mapper>

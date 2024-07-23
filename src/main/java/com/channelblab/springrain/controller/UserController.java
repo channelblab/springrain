@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.common.anotations.NoAuth;
 import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoLogin;
-import com.channelblab.springrain.model.Permission;
 import com.channelblab.springrain.model.User;
+import com.channelblab.springrain.model.UserInfoExt;
 import com.channelblab.springrain.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,11 +36,13 @@ public class UserController {
         return userService.page(page, size, userId, name);
     }
 
-
-    @GetMapping("/userPermission")
-    public List<Permission> userPermission() {
-        return null;
+    @NoAuth
+    @Operation(summary = "查询个人信息")
+    @GetMapping("/info")
+    public UserInfoExt info() {
+        return userService.info();
     }
+
 
     @NoLogin
     @NoAuth

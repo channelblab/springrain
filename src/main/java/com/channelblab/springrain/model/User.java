@@ -22,4 +22,6 @@ public class User {
     private String pass;
     @TableField(exist = false)
     private Boolean online;
+
+    private Boolean enable;
 }

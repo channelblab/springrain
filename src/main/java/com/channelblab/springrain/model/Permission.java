@@ -18,9 +18,13 @@ import java.util.List;
 public class Permission {
     @TableField(exist = false)
     List<Permission> children;
+
     private String id;
     private PermissionType type;
     private String name;
     private String uris;
     private String parentId;
+
+    //if button
+    private String symbol;
 }

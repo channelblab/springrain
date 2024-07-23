@@ -16,4 +16,5 @@ import java.util.List;
 @Repository
 public interface PermissionDao extends BaseMapper<Permission> {
     List<Permission> selectAllPermissionByUserId(@Param("userId") String userId);
+
 }
