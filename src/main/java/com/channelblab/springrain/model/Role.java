@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,10 +19,12 @@ import java.util.List;
 @TableName("perm_role")
 public class Role {
     private String id;
+    @NotBlank
     private String name;
     private String describe;
     private LocalDate createTime;
 
+    @NotEmpty
     @TableField(exist = false)
     private List<Permission> permissions;
 

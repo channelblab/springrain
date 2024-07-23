@@ -1,7 +1,11 @@
 package com.channelblab.springrain.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.channelblab.springrain.model.Role;
+import com.channelblab.springrain.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,18 +23,20 @@ import javax.validation.constraints.NotBlank;
 @RestController
 @RequestMapping("/role")
 public class RoleController {
+    @Autowired
+    private RoleService roleService;
 
 
     @Operation(summary = "新增或修改角色")
     @PostMapping("add")
-    public void add() {
-
+    public void add(@RequestBody @Validated Role role) {
+        roleService.add(role);
     }
 
     @Operation(summary = "分页查询")
     @GetMapping("/page")
-    public void page(Integer page, Integer size) {
-
+    public IPage<Role> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, String name) {
+        return roleService.page(page, size, name);
     }
 
     @Operation(summary = "删除角色")

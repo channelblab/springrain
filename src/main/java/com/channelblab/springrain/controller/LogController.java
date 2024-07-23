@@ -41,6 +41,7 @@ public class LogController {
     }
 
 
+    @NoLog
     @Operation(summary = "导出操作日志")
     @NoResponseHandle
     @GetMapping("/export")

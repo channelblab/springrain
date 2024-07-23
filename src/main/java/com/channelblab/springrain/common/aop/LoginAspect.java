@@ -7,8 +7,6 @@ import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.UserUtil;
 import com.channelblab.springrain.model.User;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,12 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class LoginAspect {
-    private static final Integer EXPIRE_MILLION_SECONDS = 1000;
-    private static Cache<Object, Object> cache;
-
-    static {
-        cache = Caffeine.newBuilder().build();
-    }
 
     @Before("execution(* *..controller.*..*(..))")
     public void doValidate(JoinPoint joinPoint) throws NoSuchMethodException {

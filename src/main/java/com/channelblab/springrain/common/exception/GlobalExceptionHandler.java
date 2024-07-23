@@ -24,15 +24,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /**
-     * 统一处理未特殊定义的异常
-     *
-     * @param e
-     * @return
-     */
+
     @ExceptionHandler(Exception.class)
-    public Response customException(Exception e) {
-        LOGGER.error("框架异常，信息为:", e);
+    public Response unHandleException(Exception e) {
+        LOGGER.error("系统异常，信息为:", e);
         return new Response() {
             @Override
             public Boolean getStatus() {
@@ -41,12 +36,11 @@ public class GlobalExceptionHandler {
 
             @Override
             public Integer getCode() {
-                return COMMON_ERROR_CODE;
+                return Response.COMMON_ERROR_CODE;
             }
 
             @Override
             public String getMessage() {
-
                 return MultilingualUtil.getValue(e.getMessage());
             }
 
@@ -65,12 +59,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public Response businessException(BusinessException be) {
-        LOGGER.error("业务异常，异常信息为：", be);
-
+        LOGGER.error("业务异常，异常信息为：{}", be.getMessage());
         return new Response() {
             @Override
             public Boolean getStatus() {
-
                 return false;
             }
 
@@ -99,7 +91,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, ConstraintViolationException.class})
     public Response parametersException(Exception me) {
-        LOGGER.error("请求参数异常，信息为:", me);
+        LOGGER.error("请求参数异常，信息为:{}", me.getMessage());
         Map<String, String> errors = new HashMap<>();
         if (me instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) me;

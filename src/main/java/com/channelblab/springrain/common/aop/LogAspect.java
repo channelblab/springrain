@@ -63,7 +63,7 @@ public class LogAspect {
         } else if (method.equals("POST") || method.equals("PUT")) {
             requestDataString = getRequestBody(joinPoint);
         }
-        Object res;
+        Object res = null;
         long startTimeMillis = System.currentTimeMillis();
         long endTimeMillis;
 
@@ -78,16 +78,17 @@ public class LogAspect {
             res = joinPoint.proceed();
             endTimeMillis = System.currentTimeMillis();
             long costTime = endTimeMillis - startTimeMillis;
-            Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS).response(om.writeValueAsString(res))
-                    .request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId()).build();
+            Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS)
+                    .response(res != null ? om.writeValueAsString(res) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId())
+                    .build();
             logDao.insert(newLog);
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();
             long costTime = endTimeMillis - startTimeMillis;
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.FAIL)
-                    .response(om.writeValueAsString(throwable.getMessage())).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId())
-                    .build();
+                    .response(res != null ? om.writeValueAsString(throwable.getMessage()) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
+                    .userId(user == null ? null : user.getId()).build();
             logDao.insert(newLog);
             throw throwable;
         }
@@ -110,19 +111,15 @@ public class LogAspect {
     }
 
     private String getRequestBody(ProceedingJoinPoint joinPoint) throws IOException {
-
         ObjectMapper om = new ObjectMapper();
-
         StringBuilder sb = new StringBuilder();
         Object[] args = joinPoint.getArgs();
-
         for (Object arg : args) {
             // 排除非JSON可序列化的参数，例如 HttpServletRequest 或 HttpServletResponse
             if (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)) {
                 sb.append(om.writeValueAsString(arg));
             }
         }
-
         return sb.toString();
     }
 

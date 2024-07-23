@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class RateLimit {
     private static final Integer EXPIRE_MILLION_SECONDS = 1000;
-    private static Cache<Object, Object> cache;
+    private static final Cache<Object, Object> cache;
 
     static {
         cache = Caffeine.newBuilder().build();

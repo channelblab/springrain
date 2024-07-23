@@ -34,6 +34,8 @@ public class PermissionController {
         return permissionService.page(page, size);
     }
 
+
+    @NoLog
     @Operation(summary = "权限树")
     @GetMapping("/tree")
     public List<Permission> tree() {

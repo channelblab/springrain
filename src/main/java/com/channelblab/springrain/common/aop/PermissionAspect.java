@@ -45,7 +45,9 @@ public class PermissionAspect {
         String requestURI = request.getRequestURI();
         if (UserHolder.getUser() == null) {
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
-
+        }
+        if (UserHolder.getUser().getId().equals("1")) {
+            return;
         }
 
         List<Permission> permissions = permissionService.selectAllPermission(UserHolder.getUser().getId());

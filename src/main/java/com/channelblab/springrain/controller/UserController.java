@@ -31,7 +31,8 @@ public class UserController {
     @NoLog
     @Operation(summary = "分页查询")
     @GetMapping("/page")
-    public IPage<User> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, String userId, String name) {
+    public IPage<User> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String name) {
         return userService.page(page, size, userId, name);
     }
 
