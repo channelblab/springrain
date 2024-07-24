@@ -1,5 +1,6 @@
 package com.channelblab.springrain.common.aop;
 
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -35,5 +36,12 @@ public class HolderInitAspect {
             LocaleContextHolder.setLocale(new Locale(lang));
         }
     }
+
+    @After("execution(* *..controller.*..*(..))")
+    public void deInit() {
+        //移除语言设置
+        LocaleContextHolder.resetLocaleContext();
+    }
+
 
 }

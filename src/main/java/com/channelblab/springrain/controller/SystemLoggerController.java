@@ -27,9 +27,15 @@ public class SystemLoggerController {
     public void changeLevel(@RequestBody @Validated SystemLogger systemLogger) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         ch.qos.logback.classic.Logger rootlogger = context.getLogger(LOGGER.ROOT_LOGGER_NAME);
-        Level level = rootlogger.getLevel();
-        System.err.println(level);
         rootlogger.setLevel(Level.toLevel(String.valueOf(systemLogger.getLevel())));
+    }
+
+    @Operation(summary = "当前日志输出级别")
+    @GetMapping("/currentLevel")
+    public String currentLevel() {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger rootlogger = context.getLogger(LOGGER.ROOT_LOGGER_NAME);
+        return rootlogger.getLevel().levelStr;
     }
 
 
