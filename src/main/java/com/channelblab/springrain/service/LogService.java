@@ -23,6 +23,7 @@ public class LogService {
     @Autowired
     private LogDao logDao;
 
+
     public IPage<Log> page(String userId, Integer page, Integer size, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         IPage<Log> pageParam = new Page<>(page, size);
         LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class).eq(!ObjectUtils.isEmpty(userId), Log::getUserId, userId).ge(startDateTime != null, Log::getCreateTime, startDateTime)
