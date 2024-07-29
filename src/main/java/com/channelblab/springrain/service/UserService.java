@@ -90,4 +90,9 @@ public class UserService {
         userInfoExt.setMenuPermissions(menuPermissions);
         return userInfoExt;
     }
+
+    public IPage<User> byDepartmentId(String departmentId, Integer page, Integer size) {
+        IPage<User> param = new Page<>(page, size);
+        return userDao.selectPage(param, Wrappers.lambdaQuery(User.class).eq(User::getEnable, true).eq(User::getDepartmentId, departmentId));
+    }
 }

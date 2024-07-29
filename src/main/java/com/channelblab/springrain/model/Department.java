@@ -1,11 +1,10 @@
 package com.channelblab.springrain.model;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
+import java.util.List;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -14,18 +13,14 @@ import javax.validation.constraints.Email;
  * @modified By：
  */
 @Data
-@TableName("system_user")
-public class User {
+@TableName("system_department")
+public class Department {
     private String id;
+    private String parentId;
+    private String managerId;
     private String name;
-    @Email
-    private String email;
-    private String pass;
-    @TableField(exist = false)
-    private Boolean online;
-
     private Boolean enable;
 
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
-    private String departmentId;
+    @TableField(exist = false)
+    private List<Department> children;
 }

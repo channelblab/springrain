@@ -43,6 +43,13 @@ public class UserController {
         return userService.info();
     }
 
+    @NoLog
+    @Operation(summary = "通过部门id查询所有员工")
+    @GetMapping("/byDepartmentId")
+    public IPage<User> byDepartmentId(@RequestParam() @NotBlank String departmentId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return userService.byDepartmentId(departmentId, page, size);
+    }
+
 
     @NoLogin
     @NoAuth
