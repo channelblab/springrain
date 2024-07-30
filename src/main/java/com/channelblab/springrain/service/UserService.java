@@ -59,9 +59,10 @@ public class UserService {
         UserUtil.kickOut(userId);
     }
 
-    public IPage<User> page(Integer page, Integer size, String userId, String name) {
+    public IPage<User> page(Integer page, Integer size, String userId, String name, String departmentId) {
         IPage<User> param = new Page<>(page, size);
-        LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class).eq(!ObjectUtils.isEmpty(userId), User::getId, userId).like(!ObjectUtils.isEmpty(name), User::getName, name);
+        LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class).eq(!ObjectUtils.isEmpty(departmentId), User::getDepartmentId, departmentId)
+                .eq(!ObjectUtils.isEmpty(userId), User::getId, userId).like(!ObjectUtils.isEmpty(name), User::getName, name);
         IPage<User> userIPage = userDao.selectPage(param, wrapper);
         List<User> records = userIPage.getRecords();
         if (!CollectionUtils.isEmpty(records)) {

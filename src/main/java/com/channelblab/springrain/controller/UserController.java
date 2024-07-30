@@ -32,8 +32,8 @@ public class UserController {
     @Operation(summary = "分页查询")
     @GetMapping("/page")
     public IPage<User> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String userId,
-            @RequestParam(required = false) String name) {
-        return userService.page(page, size, userId, name);
+            @RequestParam(required = false) String name,@RequestParam(required = false) String departmentId) {
+        return userService.page(page, size, userId, name,departmentId);
     }
 
     @NoAuth
