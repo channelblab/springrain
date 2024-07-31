@@ -2,11 +2,12 @@ package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,8 +22,10 @@ public class Role {
     private String id;
     @NotBlank
     private String name;
-    private String describe;
-    private LocalDate createTime;
+    private String detail;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
+    private String type;
 
     @NotEmpty
     @TableField(exist = false)

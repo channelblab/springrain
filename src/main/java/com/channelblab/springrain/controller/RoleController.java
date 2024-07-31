@@ -35,7 +35,7 @@ public class RoleController {
 
     @Operation(summary = "分页查询")
     @GetMapping("/page")
-    public IPage<Role> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, String name) {
+    public IPage<Role> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String name) {
         return roleService.page(page, size, name);
     }
 

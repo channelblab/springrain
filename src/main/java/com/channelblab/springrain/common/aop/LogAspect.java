@@ -59,7 +59,9 @@ public class LogAspect {
         String requestDataString = null;
         if (method.equals("GET") || method.equals("DELETE")) {
             Map<String, String> parameters = getParameters(request);
-            requestDataString = om.writeValueAsString(parameters);
+            if (parameters.keySet().size()!=0) {
+                requestDataString = om.writeValueAsString(parameters);
+            }
         } else if (method.equals("POST") || method.equals("PUT")) {
             requestDataString = getRequestBody(joinPoint);
         }
