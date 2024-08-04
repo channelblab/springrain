@@ -18,10 +18,14 @@ import lombok.Data;
 public class Multilingual {
     @TableId(type = IdType.AUTO)
     private String id;
-    private String lang;
+    private String langSymbol;
+    private String langDescribe;
     private String symbol;
     private String symbolValue;
-
     //关于当前字段的描述
     private String symbolDescribe;
+
+
+    //system custom
+    private String type;
 }

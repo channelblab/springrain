@@ -52,7 +52,7 @@ public class MultilingualUtil {
     }
 
     public static void updateData(List<Multilingual> multilingualList) {
-        Map<String, List<Multilingual>> groupedByLang = multilingualList.stream().collect(Collectors.groupingBy(Multilingual::getLang));
+        Map<String, List<Multilingual>> groupedByLang = multilingualList.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
         groupedByLang.forEach((lang, list) -> cache.put(lang, list));
     }
 }

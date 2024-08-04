@@ -1,6 +1,7 @@
 package com.channelblab.springrain.controller;
 
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
+import com.channelblab.springrain.model.MultilingualDto;
 import com.channelblab.springrain.service.MultilingualService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,12 @@ public class MultilingualController {
     @GetMapping("/importExcel")
     public void importExcel(HttpServletResponse response) throws IOException {
         response.getWriter().write("");
+    }
+
+    @Operation(summary = "查询所有多语言数据")
+    @GetMapping
+    public MultilingualDto allLang() {
+        return multilingualService.allLang();
     }
 
 

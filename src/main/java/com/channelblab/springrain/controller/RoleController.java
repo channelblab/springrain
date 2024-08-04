@@ -42,6 +42,7 @@ public class RoleController {
     @Operation(summary = "删除角色")
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable @NotBlank String id) {
+        roleService.delete(id);
 
     }
 
