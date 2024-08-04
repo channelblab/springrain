@@ -45,7 +45,9 @@ public class LogController {
     @Operation(summary = "导出操作日志")
     @NoResponseHandle
     @GetMapping("/export")
-    public void exportTemplate(HttpServletResponse response) throws IOException {
+    public void exportTemplate(HttpServletResponse response, @RequestParam(required = false) String userId,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDateTime) throws IOException {
         response.getWriter().write("");
     }
 

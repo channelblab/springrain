@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class RateLimit {
-    private static final Integer EXPIRE_MILLION_SECONDS = 1000;
+    private static final Integer EXPIRE_MILLION_SECONDS = 300;
     private static final Cache<Object, Object> cache;
 
     static {

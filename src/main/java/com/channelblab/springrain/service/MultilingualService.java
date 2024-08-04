@@ -6,6 +6,8 @@ import com.channelblab.springrain.model.Multilingual;
 import com.channelblab.springrain.model.MultilingualDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -31,5 +33,15 @@ public class MultilingualService {
         Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
         multilingualDto.setTotalLangData(totalLangData);
         return multilingualDto;
+    }
+
+    @Transactional
+    public void addOrUpdate(Multilingual multilingual) {
+        if (ObjectUtils.isEmpty(multilingual.getId())) {
+            //add
+            multilingualDao.insert(multilingual);
+        } else {
+            multilingualDao.updateById(multilingual);
+        }
     }
 }
