@@ -1,18 +1,25 @@
 package com.channelblab.springrain.controller;
 
+import com.channelblab.springrain.common.anotations.NoAuth;
+import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.model.Multilingual;
-import com.channelblab.springrain.model.MultilingualDto;
 import com.channelblab.springrain.service.MultilingualService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
+ * 复杂的数据利用excel导入导出处理就可以了，没必要在页面上过多处理
+ *
  * @author     ：dengyi(A.K.A Bear)
  * @date       ：Created in 2024-07-18 13:11
  * @description：
@@ -34,15 +41,23 @@ public class MultilingualController {
     }
 
     @Operation(summary = "导入多语言Excel")
-    @GetMapping("/importExcel")
-    public void importExcel(HttpServletResponse response) throws IOException {
-        response.getWriter().write("");
+    @PostMapping("/importExcel")
+    public void importExcel(@RequestParam @NotNull MultipartFile file) {
+        multilingualService.importExcel(file);
     }
 
     @Operation(summary = "查询所有多语言数据")
     @GetMapping
-    public MultilingualDto allLang() {
+    public List<Map<String, Object>> allLang() {
         return multilingualService.allLang();
+    }
+
+    @NoLogin
+    @NoAuth
+    @Operation(summary = "查询已存在语言列表")
+    @GetMapping("/langList")
+    public List<Multilingual> langList() {
+        return multilingualService.langList();
     }
 
     @Operation(summary = "新增或修改多语言")

@@ -3,12 +3,14 @@ package com.channelblab.springrain.service;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.channelblab.springrain.dao.MultilingualDao;
 import com.channelblab.springrain.model.Multilingual;
-import com.channelblab.springrain.model.MultilingualDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,15 +26,35 @@ public class MultilingualService {
     @Autowired
     private MultilingualDao multilingualDao;
 
-    public MultilingualDto allLang() {
+    public List<Map<String, Object>> allLang() {
         List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).orderByAsc(Multilingual::getSymbol));
-        MultilingualDto multilingualDto = new MultilingualDto();
+        List<Map<String, Object>> listRes = new ArrayList<>();
         //zh_CN as the default standard language
         List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh_CN")).collect(Collectors.toList());
-        multilingualDto.setStandardLang(standardLang);
         Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
-        multilingualDto.setTotalLangData(totalLangData);
-        return multilingualDto;
+        standardLang.forEach(standard -> {
+            Map<String, Object> mapRes = new HashMap<>();
+            mapRes.put("id", standard.getId());
+            mapRes.put("symbol", standard.getSymbol());
+            mapRes.put("symbolValue", standard.getSymbolValue());
+            mapRes.put("symbolDescribe", standard.getSymbolDescribe());
+            mapRes.put("type", standard.getType());
+            for (String key : totalLangData.keySet()) {
+                List<Multilingual> multilingualsWithLang = totalLangData.get(key);
+                mapRes.put(key, getSymbolValue(standard, multilingualsWithLang));
+            }
+            listRes.add(mapRes);
+        });
+        return listRes;
+    }
+
+    private String getSymbolValue(Multilingual standard, List<Multilingual> multilingualsWithLang) {
+        for (Multilingual item : multilingualsWithLang) {
+            if (item.getSymbol().equals(standard.getSymbol())) {
+                return item.getSymbolValue();
+            }
+        }
+        return null;
     }
 
     @Transactional
@@ -43,5 +65,13 @@ public class MultilingualService {
         } else {
             multilingualDao.updateById(multilingual);
         }
+    }
+
+    public List<Multilingual> langList() {
+        return multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).select(Multilingual::getLangSymbol, Multilingual::getLangDescribe).groupBy(Multilingual::getLangSymbol));
+    }
+
+    public void importExcel(MultipartFile file) {
+
     }
 }
