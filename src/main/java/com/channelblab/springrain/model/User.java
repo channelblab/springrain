@@ -3,6 +3,8 @@ package com.channelblab.springrain.model;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -20,6 +22,7 @@ public class User {
     private String name;
     @Email
     private String email;
+    @JsonSerialize(using =NullSerializer.class)
     private String pass;
     @TableField(exist = false)
     private Boolean online;

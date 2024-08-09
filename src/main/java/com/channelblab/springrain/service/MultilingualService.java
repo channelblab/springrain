@@ -74,4 +74,33 @@ public class MultilingualService {
     public void importExcel(MultipartFile file) {
 
     }
+
+    public Map<String, Object> dataForExport() {
+        Map<String, Object> resData = new HashMap<>();
+        List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).orderByAsc(Multilingual::getSymbol));
+        List<Map<String, Object>> listRes = new ArrayList<>();
+        //zh_CN as the default standard language
+        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh_CN")).collect(Collectors.toList());
+        Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
+        standardLang.forEach(standard -> {
+            Map<String, Object> mapRes = new HashMap<>();
+            mapRes.put("id", standard.getId());
+            mapRes.put("symbol", standard.getSymbol());
+            mapRes.put("symbolValue", standard.getSymbolValue());
+            mapRes.put("symbolDescribe", standard.getSymbolDescribe());
+            mapRes.put("type", standard.getType());
+            for (String key : totalLangData.keySet()) {
+                List<Multilingual> multilingualsWithLang = totalLangData.get(key);
+                mapRes.put(key, getSymbolValue(standard, multilingualsWithLang));
+            }
+            listRes.add(mapRes);
+        });
+        resData.put("realData", listRes);
+        Map<String, String> frameData = new HashMap<>();
+        for (String key : totalLangData.keySet()) {
+            frameData.put(key, totalLangData.get(key).get(0).getLangDescribe());
+        }
+        resData.put("frameData", frameData);
+        return resData;
+    }
 }
