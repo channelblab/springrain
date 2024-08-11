@@ -1,6 +1,7 @@
 package com.channelblab.springrain.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.channelblab.springrain.common.utils.ExcelUtil;
 import com.channelblab.springrain.dao.MultilingualDao;
 import com.channelblab.springrain.model.Multilingual;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +40,6 @@ public class MultilingualService {
             mapRes.put("symbol", standard.getSymbol());
             mapRes.put("symbolValue", standard.getSymbolValue());
             mapRes.put("symbolDescribe", standard.getSymbolDescribe());
-            mapRes.put("type", standard.getType());
             for (String key : totalLangData.keySet()) {
                 List<Multilingual> multilingualsWithLang = totalLangData.get(key);
                 mapRes.put(key, getSymbolValue(standard, multilingualsWithLang));
@@ -68,10 +69,21 @@ public class MultilingualService {
     }
 
     public List<Multilingual> langList() {
-        return multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).select(Multilingual::getLangSymbol, Multilingual::getLangDescribe).groupBy(Multilingual::getLangSymbol));
+        return multilingualDao.selectList(
+                Wrappers.lambdaQuery(Multilingual.class).select(Multilingual::getLangSymbol, Multilingual::getLangDescribe).groupBy(Multilingual::getLangSymbol, Multilingual::getLangDescribe));
     }
 
+    @Transactional
     public void importExcel(MultipartFile file) {
+        try {
+            List<Multilingual> multilinguals = ExcelUtil.importMultilingualExcel(file.getInputStream());
+            multilingualDao.delete(null);
+            for (Multilingual multilingual : multilinguals) {
+                multilingualDao.insert(multilingual);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -88,7 +100,6 @@ public class MultilingualService {
             mapRes.put("symbol", standard.getSymbol());
             mapRes.put("symbolValue", standard.getSymbolValue());
             mapRes.put("symbolDescribe", standard.getSymbolDescribe());
-            mapRes.put("type", standard.getType());
             for (String key : totalLangData.keySet()) {
                 List<Multilingual> multilingualsWithLang = totalLangData.get(key);
                 mapRes.put(key, getSymbolValue(standard, multilingualsWithLang));

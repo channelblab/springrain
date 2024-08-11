@@ -1,6 +1,7 @@
 package com.channelblab.springrain.controller;
 
 import com.channelblab.springrain.common.anotations.NoAuth;
+import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.common.utils.ExcelUtil;
@@ -57,6 +58,7 @@ public class MultilingualController {
 
     }
 
+    @NoLog
     @Operation(summary = "导入多语言Excel")
     @PostMapping("/importExcel")
     public void importExcel(@RequestParam @NotNull MultipartFile file) {

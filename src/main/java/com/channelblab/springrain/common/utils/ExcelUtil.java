@@ -1,9 +1,13 @@
 package com.channelblab.springrain.common.utils;
 
+import com.channelblab.springrain.model.Multilingual;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,38 +15,36 @@ import java.util.Set;
 public class ExcelUtil {
 
 
-    //    public static List<LanguageTemplate> importExcel(MultipartFile file) throws IOException {
-    //        List<LanguageTemplate> templates = new ArrayList<>();
-    //
-    //        try (InputStream inputStream = file.getInputStream()) {
-    //            Workbook workbook = new XSSFWorkbook(inputStream);
-    //            Sheet sheet = workbook.getSheetAt(0);
-    //
-    //            // 假设第一行是标题行，第二行是语言代码行，实际数据从第三行开始
-    //            Row languageRow = sheet.getRow(2); // 第三行语言代码
-    //
-    //            for (int i = 3; i <= sheet.getLastRowNum(); i++) {  // 数据从第4行开始
-    //                Row row = sheet.getRow(i);
-    //                if (row == null) continue;
-    //
-    //                LanguageTemplate template = new LanguageTemplate();
-    //                template.setIdentifier(row.getCell(0).getStringCellValue());
-    //                template.setMeaning(row.getCell(1).getStringCellValue());
-    //
-    //                Map<String, String> translations = new HashMap<>();
-    //                for (int j = 2; j < row.getLastCellNum(); j++) {
-    //                    String langCode = languageRow.getCell(j).getStringCellValue();
-    //                    String translation = row.getCell(j).getStringCellValue();
-    //                    translations.put(langCode, translation);
-    //                }
-    //                template.setTranslations(translations);
-    //
-    //                templates.add(template);
-    //            }
-    //        }
-    //
-    //        return templates;
-    //    }
+    public static List<Multilingual> importMultilingualExcel(InputStream inputStream) throws IOException {
+        List<Multilingual> list = new ArrayList<>();
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        Row row3 = sheet.getRow(2);
+        Row row4 = sheet.getRow(3);
+        int startCol = 2;
+
+        while (row3.getCell(startCol) != null) {
+            String langDescribe = String.valueOf(row3.getCell(startCol));
+            String langSymbol = String.valueOf(row4.getCell(startCol));
+            int startRow = 4;
+            while (sheet.getRow(startRow) != null) {
+                String symbol = String.valueOf(sheet.getRow(startRow).getCell(0));
+                String symbolDescribe = String.valueOf(sheet.getRow(startRow).getCell(1));
+                String symbolValue = String.valueOf(sheet.getRow(startRow).getCell(startCol));
+                Multilingual multilingual = new Multilingual();
+                multilingual.setLangSymbol(langSymbol);
+                multilingual.setLangDescribe(langDescribe);
+                multilingual.setSymbol(symbol);
+                multilingual.setSymbolDescribe(symbolDescribe);
+                multilingual.setSymbolValue(symbolValue);
+                list.add(multilingual);
+                startRow++;
+            }
+            startCol++;
+
+        }
+        return list;
+    }
 
 
     public static Workbook exportMultilingualExcel(Map<String, Object> dataForExport) {
