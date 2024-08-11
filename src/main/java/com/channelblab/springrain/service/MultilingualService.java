@@ -28,8 +28,9 @@ public class MultilingualService {
     @Autowired
     private MultilingualDao multilingualDao;
 
-    public List<Map<String, Object>> allLang() {
-        List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).orderByAsc(Multilingual::getSymbol));
+    public List<Map<String, Object>> allLang(String symbol, String symbolDescribe) {
+        List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(!ObjectUtils.isEmpty(symbol), Multilingual::getSymbol, symbol)
+                .like(!ObjectUtils.isEmpty(symbolDescribe), Multilingual::getSymbolDescribe, symbolDescribe).orderByAsc(Multilingual::getSymbol));
         List<Map<String, Object>> listRes = new ArrayList<>();
         //zh_CN as the default standard language
         List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh_CN")).collect(Collectors.toList());

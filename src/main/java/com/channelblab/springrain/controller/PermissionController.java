@@ -30,8 +30,8 @@ public class PermissionController {
     @NoLog
     @Operation(summary = "分页查询")
     @GetMapping("/page")
-    public IPage<Permission> page(Integer page, Integer size) {
-        return permissionService.page(page, size);
+    public IPage<Permission> page(Integer page, Integer size, String name) {
+        return permissionService.page(page, size, name);
     }
 
 

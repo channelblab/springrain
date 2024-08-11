@@ -1,6 +1,7 @@
 package com.channelblab.springrain.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.PermissionDao;
@@ -8,6 +9,7 @@ import com.channelblab.springrain.model.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,9 +25,9 @@ public class PermissionService {
     @Autowired
     private PermissionDao permissionDao;
 
-    public IPage<Permission> page(Integer page, Integer size) {
+    public IPage<Permission> page(Integer page, Integer size, String name) {
         IPage<Permission> pageParam = new Page<>(page == null ? 1 : page, size == null ? 10 : size);
-        return permissionDao.selectPage(pageParam, null);
+        return permissionDao.selectPage(pageParam, Wrappers.lambdaQuery(Permission.class).like(!ObjectUtils.isEmpty(name), Permission::getName, name));
     }
 
     public List<Permission> tree() {

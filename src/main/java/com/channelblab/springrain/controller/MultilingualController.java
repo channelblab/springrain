@@ -37,12 +37,12 @@ public class MultilingualController {
     private MultilingualService multilingualService;
 
 
+    @NoLog
     @Operation(summary = "导出Excel")
     @NoResponseHandle
     @GetMapping("/exportExcel")
     public void exportExcel(HttpServletResponse response) throws IOException {
         Map<String, Object> dataForExport = multilingualService.dataForExport();
-
         // 设置响应头
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         String fileName = URLEncoder.encode("LanguageTemplate.xlsx", "UTF-8").replaceAll("\\+", "%20");
@@ -66,10 +66,11 @@ public class MultilingualController {
     }
 
 
+    @NoLog
     @Operation(summary = "查询所有多语言数据")
     @GetMapping
-    public List<Map<String, Object>> allLang() {
-        return multilingualService.allLang();
+    public List<Map<String, Object>> allLang(String symbol, String symbolDescribe) {
+        return multilingualService.allLang(symbol, symbolDescribe);
     }
 
     @NoLogin
