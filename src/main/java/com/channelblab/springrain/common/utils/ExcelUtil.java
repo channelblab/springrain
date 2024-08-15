@@ -1,6 +1,8 @@
 package com.channelblab.springrain.common.utils;
 
+import com.channelblab.springrain.common.enums.PermissionType;
 import com.channelblab.springrain.model.Multilingual;
+import com.channelblab.springrain.model.Permission;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExcelUtil {
 
@@ -104,11 +107,86 @@ public class ExcelUtil {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
+        font.setColor(IndexedColors.WHITE.getIndex());
         font.setFontHeightInPoints((short) 16);
         style.setFont(font);
+
+        style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         return style;
     }
 
+    // 原则上只迭代三层，事实上工程上的的实践，页面上菜单层级不能太深
+    public static Workbook exportPermissionExcel(List<Permission> tree) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("权限");
+
+        Row headRow = sheet.createRow(0);
+        Cell cell0 = headRow.createCell(0);
+        cell0.setCellValue("id");
+        Cell cell1 = headRow.createCell(1);
+        cell1.setCellValue("父级id");
+        Cell cell2 = headRow.createCell(2);
+        cell2.setCellValue("名称");
+        Cell cell3 = headRow.createCell(3);
+        cell3.setCellValue("标识");
+        Cell cell4 = headRow.createCell(4);
+        cell4.setCellValue("类型");
+        Cell cell5 = headRow.createCell(5);
+        cell5.setCellValue("路径");
+
+        //为啥不用int? Java的值传递导致每次都是一个备份，所以不会修改
+        AtomicInteger rowIndex = new AtomicInteger(1);
+
+        for (Permission permission : tree) {
+            writePermissionToSheet(sheet, permission, rowIndex);
+        }
+
+        return workbook;
+    }
+
+
+    private static void writePermissionToSheet(Sheet sheet, Permission permission, AtomicInteger rowIndex) {
+        Row row = sheet.createRow(rowIndex.getAndIncrement());
+        row.createCell(0).setCellValue(permission.getId());
+        row.createCell(1).setCellValue(permission.getParentId());
+        row.createCell(2).setCellValue(permission.getName());
+        row.createCell(3).setCellValue(permission.getSymbol());
+        row.createCell(4).setCellValue(permission.getType().toString());
+        row.createCell(5).setCellValue(permission.getUris());
+
+        // 递归处理子节点
+        if (permission.getChildren() != null) {
+            for (Permission child : permission.getChildren()) {
+                writePermissionToSheet(sheet, child, rowIndex);
+            }
+        }
+    }
+
+    public static List<Permission> resolvePermission(InputStream inputStream) {
+        List<Permission> res = new ArrayList<>();
+        try {
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            int rowStartIndex = 1;
+
+            while (sheet.getRow(rowStartIndex) != null) {
+                Row row = sheet.getRow(rowStartIndex);
+                Permission permission = new Permission();
+                permission.setId(String.valueOf(row.getCell(0)));
+                permission.setParentId(row.getCell(1) != null ? String.valueOf(row.getCell(1)) : null);
+                permission.setName(String.valueOf(row.getCell(2)));
+                permission.setSymbol(row.getCell(3) != null ? String.valueOf(row.getCell(3)) : null);
+                permission.setType(PermissionType.valueOf(String.valueOf(row.getCell(4))));
+                permission.setUris(row.getCell(5) != null ? String.valueOf(row.getCell(3)) : null);
+                res.add(permission);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return res;
+    }
 }

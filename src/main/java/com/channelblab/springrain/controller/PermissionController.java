@@ -2,15 +2,21 @@ package com.channelblab.springrain.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.common.anotations.NoLog;
+import com.channelblab.springrain.common.anotations.NoResponseHandle;
+import com.channelblab.springrain.common.utils.ExcelUtil;
 import com.channelblab.springrain.model.Permission;
 import com.channelblab.springrain.service.PermissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -27,6 +33,7 @@ public class PermissionController {
     @Autowired
     private PermissionService permissionService;
 
+    //todo 没有分页查的必要
     @NoLog
     @Operation(summary = "分页查询")
     @GetMapping("/page")
@@ -40,6 +47,30 @@ public class PermissionController {
     @GetMapping("/tree")
     public List<Permission> tree() {
         return permissionService.tree();
+    }
+
+
+    @NoLog
+    @Operation(summary = "导出Excel")
+    @NoResponseHandle
+    @GetMapping("/exportExcel")
+    public void exportExcel(HttpServletResponse response) throws IOException {
+        // 设置响应头
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = URLEncoder.encode("权限信息.xlsx", "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+        Workbook workbook = ExcelUtil.exportPermissionExcel(tree());
+        workbook.write(response.getOutputStream());
+    }
+
+    @NoLog
+    @Operation(summary = "导入Excel")
+    @PostMapping("/importExcel")
+    public void importExcel(@RequestParam @NotNull MultipartFile file) throws IOException {
+        List<Permission> permissions = ExcelUtil.resolvePermission(file.getInputStream());
+        permissionService.fullyUpdate(permissions);
     }
 
 }

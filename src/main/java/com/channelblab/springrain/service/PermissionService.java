@@ -8,6 +8,7 @@ import com.channelblab.springrain.dao.PermissionDao;
 import com.channelblab.springrain.model.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -60,5 +61,14 @@ public class PermissionService {
 
     public List<Permission> selectAllPermission(String userId) {
         return permissionDao.selectAllPermissionByUserId(userId);
+    }
+
+    @Transactional
+    public void fullyUpdate(List<Permission> permissions) {
+        permissionDao.delete(null);
+        //todo update the cache in some where
+        for (Permission permission : permissions) {
+            permissionDao.insert(permission);
+        }
     }
 }
