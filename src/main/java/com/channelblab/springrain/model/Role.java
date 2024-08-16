@@ -25,14 +25,16 @@ public class Role {
     private String detail;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateTime;
     private String type;
 
     @NotEmpty
     @TableField(exist = false)
     private List<Permission> permissions;
 
-
-    //    @TableField(exist = false)
-    //    private List<user> users;
+    @TableField(exist = false)
+    private List<User> users;
 
 }

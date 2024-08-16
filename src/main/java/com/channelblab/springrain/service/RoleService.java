@@ -7,12 +7,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.dao.RoleDao;
 import com.channelblab.springrain.dao.RolePermissionDao;
-import com.channelblab.springrain.model.Role;
-import com.channelblab.springrain.model.RolePermission;
+import com.channelblab.springrain.dao.UserRoleDao;
+import com.channelblab.springrain.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -26,10 +29,31 @@ public class RoleService {
     private RoleDao roleDao;
     @Autowired
     private RolePermissionDao rolePermissionDao;
+    @Autowired
+    private UserRoleDao userRoleDao;
 
 
     public void add(Role role) {
+        if (ObjectUtils.isEmpty(role.getId())) {
+            //add
+            role.setCreateTime(LocalDateTime.now());
+            role.setUpdateTime(LocalDateTime.now());
+        } else {
+            //update
+            role.setUpdateTime(LocalDateTime.now());
+        }
+        //fully update
+        rolePermissionDao.delete(Wrappers.lambdaQuery(RolePermission.class).eq(RolePermission::getRoleId, role.getId()));
+        List<Permission> permissions = role.getPermissions();
+        permissions.forEach(item -> {
+            RolePermission rp = new RolePermission();
+            rp.setRoleId(role.getId());
+            rp.setPermissionId(item.getId());
+            rolePermissionDao.insert(rp);
+        });
 
+        userRoleDao.delete(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, role.getId()));
+        List<User> users = role.getUsers();
     }
 
     public IPage<Role> page(Integer page, Integer size, String name) {

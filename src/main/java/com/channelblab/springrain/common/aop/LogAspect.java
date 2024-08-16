@@ -1,11 +1,13 @@
 package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.anotations.NoLog;
+import com.channelblab.springrain.common.disruptor.MessageEvent;
+import com.channelblab.springrain.common.disruptor.MessageEventType;
 import com.channelblab.springrain.common.enums.RequestStatus;
 import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.IpUtil;
-import com.channelblab.springrain.dao.LogDao;
+import com.channelblab.springrain.common.utils.MessageEventProducer;
 import com.channelblab.springrain.model.Log;
 import com.channelblab.springrain.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,9 +46,9 @@ import java.util.Map;
 @Component
 public class LogAspect {
     @Autowired
-    private LogDao logDao;
-    @Autowired
     private ObjectMapper om;
+    @Autowired
+    private MessageEventProducer messageEventProducer;
 
     @Around("execution(* *..controller.*..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -60,6 +62,7 @@ public class LogAspect {
         if (method.equals("GET") || method.equals("DELETE")) {
             Map<String, String> parameters = getParameters(request);
             if (parameters.keySet().size()!=0) {
+                //todo 不能序列化的东西不处理
                 requestDataString = om.writeValueAsString(parameters);
             }
         } else if (method.equals("POST") || method.equals("PUT")) {
@@ -83,7 +86,10 @@ public class LogAspect {
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS)
                     .response(res != null ? om.writeValueAsString(res) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId())
                     .build();
-            logDao.insert(newLog);
+            MessageEvent event = new MessageEvent();
+            event.setMessageEventType(MessageEventType.LOG);
+            event.setData(newLog);
+            messageEventProducer.produce(event);
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();
@@ -91,7 +97,11 @@ public class LogAspect {
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.FAIL)
                     .response(res != null ? om.writeValueAsString(throwable.getMessage()) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
                     .userId(user == null ? null : user.getId()).build();
-            logDao.insert(newLog);
+
+            MessageEvent event = new MessageEvent();
+            event.setMessageEventType(MessageEventType.LOG);
+            event.setData(newLog);
+            messageEventProducer.produce(event);
             throw throwable;
         }
         return res;
@@ -117,7 +127,7 @@ public class LogAspect {
         StringBuilder sb = new StringBuilder();
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
-            // 排除非JSON可序列化的参数，例如 HttpServletRequest 或 HttpServletResponse
+            //todo  排除非JSON可序列化的参数，例如 HttpServletRequest 或 HttpServletResponse
             if (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)) {
                 sb.append(om.writeValueAsString(arg));
             }
