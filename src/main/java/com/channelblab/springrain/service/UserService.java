@@ -1,6 +1,5 @@
 package com.channelblab.springrain.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,7 +17,6 @@ import com.channelblab.springrain.model.UserInfoExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,9 +59,7 @@ public class UserService {
 
     public IPage<User> page(Integer page, Integer size, String userId, String name, String departmentId) {
         IPage<User> param = new Page<>(page, size);
-        LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class).eq(!ObjectUtils.isEmpty(departmentId), User::getDepartmentId, departmentId)
-                .eq(!ObjectUtils.isEmpty(userId), User::getId, userId).like(!ObjectUtils.isEmpty(name), User::getName, name);
-        IPage<User> userIPage = userDao.selectPage(param, wrapper);
+        IPage<User> userIPage = userDao.selectCustomPage(param, departmentId, userId, name);
         List<User> records = userIPage.getRecords();
         if (!CollectionUtils.isEmpty(records)) {
             List<String> onlineUserIds = UserUtil.onlineUsers().stream().map(User::getId).collect(Collectors.toList());

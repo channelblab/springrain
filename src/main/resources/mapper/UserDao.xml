@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelblab.springrain.dao.UserDao">
+    <select id="selectCustomPage"
+            resultType="com.channelblab.springrain.model.User">
+
+        SELECT
+        *,
+        system_department.`name` AS departmentName
+        FROM
+        system_user
+        LEFT JOIN system_department ON system_department.id =
+        system_user.department_id
+        <where>
+            <if test="departmentId != null and departmentId != ''">
+                AND system_user.department_id = #{departmentId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND system_user.id = #{userId}
+            </if>
+            <if test="name != null and name != ''">
+                AND system_user.`name` LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

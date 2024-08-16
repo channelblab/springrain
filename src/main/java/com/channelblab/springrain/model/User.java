@@ -31,4 +31,7 @@ public class User {
 
     @TableField(updateStrategy = FieldStrategy.IGNORED)
     private String departmentId;
+
+    @TableField(exist = false)
+    private String departmentName;
 }

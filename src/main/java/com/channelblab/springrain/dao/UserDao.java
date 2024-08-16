@@ -1,7 +1,9 @@
 package com.channelblab.springrain.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.model.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,4 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserDao extends BaseMapper<User> {
+    IPage<User> selectCustomPage(IPage<User> param, @Param("departmentId") String departmentId, @Param("userId") String userId, @Param("name") String name);
 }

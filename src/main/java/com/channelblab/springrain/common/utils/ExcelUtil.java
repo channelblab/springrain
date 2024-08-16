@@ -122,19 +122,31 @@ public class ExcelUtil {
     public static Workbook exportPermissionExcel(List<Permission> tree) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("权限");
+        sheet.setColumnWidth(0, 10 * 256); // 设置第一列宽度为30个字符
+        sheet.setColumnWidth(1, 10 * 256); // 设置第二列宽度为30个字符
+        sheet.setColumnWidth(2, 30 * 256);
+        sheet.setColumnWidth(3, 30 * 256);
+        sheet.setColumnWidth(4, 30 * 256);
+        sheet.setColumnWidth(5, 40 * 256);
 
         Row headRow = sheet.createRow(0);
         Cell cell0 = headRow.createCell(0);
+        cell0.setCellStyle(createMergedCellStyle(workbook));
         cell0.setCellValue("id");
         Cell cell1 = headRow.createCell(1);
+        cell1.setCellStyle(createMergedCellStyle(workbook));
         cell1.setCellValue("父级id");
         Cell cell2 = headRow.createCell(2);
+        cell2.setCellStyle(createMergedCellStyle(workbook));
         cell2.setCellValue("名称");
         Cell cell3 = headRow.createCell(3);
+        cell3.setCellStyle(createMergedCellStyle(workbook));
         cell3.setCellValue("标识");
         Cell cell4 = headRow.createCell(4);
+        cell4.setCellStyle(createMergedCellStyle(workbook));
         cell4.setCellValue("类型");
         Cell cell5 = headRow.createCell(5);
+        cell5.setCellStyle(createMergedCellStyle(workbook));
         cell5.setCellValue("路径");
 
         //为啥不用int? Java的值传递导致每次都是一个备份，所以不会修改
@@ -171,8 +183,8 @@ public class ExcelUtil {
             Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(0);
             int rowStartIndex = 1;
-
-            while (sheet.getRow(rowStartIndex) != null) {
+            int lastRowNum = sheet.getLastRowNum();
+            while (rowStartIndex <= lastRowNum) {
                 Row row = sheet.getRow(rowStartIndex);
                 Permission permission = new Permission();
                 permission.setId(String.valueOf(row.getCell(0)));
@@ -180,8 +192,9 @@ public class ExcelUtil {
                 permission.setName(String.valueOf(row.getCell(2)));
                 permission.setSymbol(row.getCell(3) != null ? String.valueOf(row.getCell(3)) : null);
                 permission.setType(PermissionType.valueOf(String.valueOf(row.getCell(4))));
-                permission.setUris(row.getCell(5) != null ? String.valueOf(row.getCell(3)) : null);
+                permission.setUris(row.getCell(5) != null ? String.valueOf(row.getCell(5)) : null);
                 res.add(permission);
+                rowStartIndex++;
             }
 
         } catch (IOException e) {

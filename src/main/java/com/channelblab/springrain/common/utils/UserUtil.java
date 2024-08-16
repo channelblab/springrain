@@ -59,7 +59,7 @@ public class UserUtil {
         Cache<Object, Object> caffeine = getCaffeine();
         for (Object key : caffeine.asMap().keySet()) {
             User u = (User) caffeine.getIfPresent(key);
-            if (u.equals(userId)) {
+            if (u.getId().equals(userId)) {
                 caffeine.invalidate(key);
             }
         }
