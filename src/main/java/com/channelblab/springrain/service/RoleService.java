@@ -54,6 +54,12 @@ public class RoleService {
 
         userRoleDao.delete(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, role.getId()));
         List<User> users = role.getUsers();
+        users.forEach(item -> {
+            UserRole ur = new UserRole();
+            ur.setUserId(item.getId());
+            ur.setRoleId(role.getId());
+            userRoleDao.insert(ur);
+        });
     }
 
     public IPage<Role> page(Integer page, Integer size, String name) {
