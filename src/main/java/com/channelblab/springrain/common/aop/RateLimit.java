@@ -18,6 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ *  block 10 times in 10 mines add to the black list
  * @author ：dengyi(A.K.A Bear)
  * @date ：Created in 2024-05-22 14:45
  * @description：
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class RateLimit {
-    private static final Integer EXPIRE_MILLION_SECONDS = 300;
+    private static final Integer DEFAULT_EXPIRE_MILLION_SECONDS = 300;
     private static final Cache<Object, Object> cache;
 
     static {
@@ -39,6 +40,10 @@ public class RateLimit {
         if (AnnotationUtil.containAnnotation(joinPoint, NoRateLimit.class)) {
             return;
         }
+        // if set -1 do not use rate limiter
+        if (DEFAULT_EXPIRE_MILLION_SECONDS.equals(-1)) {
+            return;
+        }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String requestURI = request.getRequestURI();
@@ -48,7 +53,7 @@ public class RateLimit {
         if (ifPresent != null) {
             long lastMillions = (long) ifPresent;
             cache.put(remoteIP + "/" + requestURI, currentMillis);
-            if (currentMillis - lastMillions < EXPIRE_MILLION_SECONDS) {
+            if (currentMillis - lastMillions < DEFAULT_EXPIRE_MILLION_SECONDS) {
                 throw new BusinessException(Response.RATE_LIMIT_CODE, "request_rate_limit");
             }
         } else {
