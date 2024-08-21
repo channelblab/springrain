@@ -38,13 +38,13 @@ public class UserService {
     public String loginByEmail(User user) {
         User userExist = userDao.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getEmail, user.getEmail()).eq(User::getEnable, true));
         if (userExist == null) {
-            throw new BusinessException(Response.USERNAME_PASSWORD_ERROR_CODE, "user_name_password_error");
+            throw new BusinessException(Response.USERNAME_PASSWORD_ERROR_CODE, "username_password_error_code_msg");
         }
         if (PasswordUtil.match(user.getPass(), userExist.getPass())) {
             userExist.setPass(null);
             return UserUtil.genToken(userExist);
         } else {
-            throw new BusinessException(Response.USERNAME_PASSWORD_ERROR_CODE, "user_name_password_error");
+            throw new BusinessException(Response.USERNAME_PASSWORD_ERROR_CODE, "username_password_error_code_msg");
         }
 
     }

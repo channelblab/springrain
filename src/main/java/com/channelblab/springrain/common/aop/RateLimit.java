@@ -54,7 +54,7 @@ public class RateLimit {
             long lastMillions = (long) ifPresent;
             cache.put(remoteIP + "/" + requestURI, currentMillis);
             if (currentMillis - lastMillions < DEFAULT_EXPIRE_MILLION_SECONDS) {
-                throw new BusinessException(Response.RATE_LIMIT_CODE, "request_rate_limit");
+                throw new BusinessException(Response.RATE_LIMIT_CODE, "rate_limit_code_msg");
             }
         } else {
             cache.put(remoteIP + "/" + requestURI, currentMillis);

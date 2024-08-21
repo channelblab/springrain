@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -133,30 +134,30 @@ public class GlobalExceptionHandler {
      * @param me 参数异常类
      * @return
      */
-    //    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-    //    public Response methodException(Exception me) {
-    //        return new Response() {
-    //            @Override
-    //            public Boolean getStatus() {
-    //                return false;
-    //            }
-    //
-    //            @Override
-    //            public Integer getCode() {
-    //                return ERROR_CODE;
-    //            }
-    //
-    //            @Override
-    //            public String getMessage() {
-    //                return me.getMessage();
-    //            }
-    //
-    //            @Override
-    //            public Object getData() {
-    //                return null;
-    //            }
-    //        };
-    //    }
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    public Response methodException(Exception me) {
+        return new Response() {
+            @Override
+            public Boolean getStatus() {
+                return false;
+            }
+
+            @Override
+            public Integer getCode() {
+                return COMMON_ERROR_CODE;
+            }
+
+            @Override
+            public String getMessage() {
+                return me.getMessage();
+            }
+
+            @Override
+            public Object getData() {
+                return null;
+            }
+        };
+    }
 
 
 }

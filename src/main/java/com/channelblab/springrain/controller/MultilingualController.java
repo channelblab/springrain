@@ -46,11 +46,11 @@ public class MultilingualController {
         // 设置响应头
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         String fileName = URLEncoder.encode("多语言模板.xlsx", "UTF-8").replaceAll("\\+", "%20");
-        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+        response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
 
         try (Workbook workbook = ExcelUtil.exportMultilingualExcel(dataForExport)) {
-
             workbook.write(response.getOutputStream());
         }
 
@@ -80,7 +80,7 @@ public class MultilingualController {
         return multilingualService.langList();
     }
 
-    @Operation(summary = "新增或修改多语言")
+    @Operation(summary = "新增或修改多语言-停止使用")
     @PostMapping("/addOrUpdate")
     public void addOrUpdate(@RequestBody Multilingual multilingual) {
         multilingualService.addOrUpdate(multilingual);

@@ -1,9 +1,9 @@
 package com.channelblab.springrain.common.response;
 
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
+import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -21,8 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @RestControllerAdvice
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
-    @Autowired
-    private ObjectMapper objectMapper;
 
 
     @Override
@@ -60,9 +58,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    //todo 是否需要多语言处理
-                    //                    return I18nMessageUtil.get("system.operation.success");
-                    return "操作成功";
+                    return MultilingualUtil.getValue("success_code_msg");
                 }
 
                 @Override
@@ -90,9 +86,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    //todo 是否需要多语言处理
-                    //                    return I18nMessageUtil.get("system.operation.success");
-                    return "操作成功";
+                    return MultilingualUtil.getValue("success_code_msg");
                 }
 
                 @Override

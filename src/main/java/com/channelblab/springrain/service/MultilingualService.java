@@ -2,6 +2,7 @@ package com.channelblab.springrain.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.channelblab.springrain.common.utils.ExcelUtil;
+import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.MultilingualDao;
 import com.channelblab.springrain.model.Multilingual;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,9 @@ public class MultilingualService {
             for (Multilingual multilingual : multilinguals) {
                 multilingualDao.insert(multilingual);
             }
+            //update cache
+            List<Multilingual> multilingualList = multilingualDao.selectList(null);
+            MultilingualUtil.updateData(multilingualList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

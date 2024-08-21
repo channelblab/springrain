@@ -46,16 +46,17 @@ public class PermissionAspect {
         if (UserHolder.getUser() == null) {
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
+        //special permission
         if (UserHolder.getUser().getId().equals("1")) {
             return;
         }
 
         List<Permission> permissions = permissionService.selectAllPermission(UserHolder.getUser().getId());
-        if (permissions == null) {
-            throw new BusinessException("permission_not_config");
-        }
+        //        if (permissions == null) {
+        //            throw new BusinessException("permission_not_config");
+        //        }
         if (!passValidation(requestURI, permissions)) {
-            throw new BusinessException(Response.NO_PERMISSION, "no_permission_to_access");
+            throw new BusinessException(Response.NO_PERMISSION, "no_permission_msg");
         }
     }
 
