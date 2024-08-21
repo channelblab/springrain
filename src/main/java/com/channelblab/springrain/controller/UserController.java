@@ -57,7 +57,6 @@ public class UserController {
     @PostMapping("/loginByEmail")
     public String loginByEmail(@RequestBody User user) {
         return userService.loginByEmail(user);
-
     }
 
     @Operation(summary = "当前在线人员")
