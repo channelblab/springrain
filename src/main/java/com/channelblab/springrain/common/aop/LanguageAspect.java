@@ -22,7 +22,7 @@ import java.util.Locale;
 @Order(1)
 @Aspect
 @Component
-public class HolderInitAspect {
+public class LanguageAspect {
 
     @Before("execution(* *..controller.*..*(..))")
     public void doInit() {
