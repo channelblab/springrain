@@ -33,14 +33,16 @@ public class RoleService {
     private UserRoleDao userRoleDao;
 
 
-    public void add(Role role) {
+    public void addOrUpdate(Role role) {
         if (ObjectUtils.isEmpty(role.getId())) {
             //add
             role.setCreateTime(LocalDateTime.now());
             role.setUpdateTime(LocalDateTime.now());
+            roleDao.insert(role);
         } else {
             //update
             role.setUpdateTime(LocalDateTime.now());
+            roleDao.updateById(role);
         }
         //fully update
         rolePermissionDao.delete(Wrappers.lambdaQuery(RolePermission.class).eq(RolePermission::getRoleId, role.getId()));

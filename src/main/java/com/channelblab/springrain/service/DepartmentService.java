@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,9 +52,63 @@ public class DepartmentService {
 
         List<User> users = userDao.selectList(Wrappers.lambdaQuery(User.class).eq(User::getEnable, true).eq(User::getDepartmentId, departmentId));
 
-        users.forEach(user->{
+        users.forEach(user -> {
             user.setDepartmentId(null);
             userDao.updateById(user);
         });
     }
+
+    public List<Department> deptUserTree() {
+        List<Department> departments = departmentDao.selectList(Wrappers.lambdaQuery(Department.class).eq(Department::getEnable, true));
+        List<Department> rootDepartments = departments.stream().filter(department -> department.getParentId() == null).collect(Collectors.toList());
+        List<User> users = userDao.selectList(Wrappers.lambdaQuery(User.class).eq(User::getEnable, true));
+        List<User> usersInRoot = users.stream().filter(user -> user.getDepartmentId() == null).collect(Collectors.toList());
+        if (rootDepartments.isEmpty()) {
+            return new ArrayList<>();
+        }
+        for (Department rootDepartment : rootDepartments) {
+            iterAllDepartmentAndUsers(rootDepartment, users, departments);
+        }
+        if (!usersInRoot.isEmpty()) {
+            //未分配的放在第一个根下
+            Department firstRoot = rootDepartments.get(0);
+            List<Department> depts = new ArrayList<>();
+            for (User user : usersInRoot) {
+                Department userAsDept = new Department();
+                userAsDept.setId(user.getId());
+                userAsDept.setName(user.getName());
+                depts.add(userAsDept);
+            }
+            firstRoot.getChildren().addAll(depts);
+        }
+        return rootDepartments;
+    }
+
+    private void iterAllDepartmentAndUsers(Department rootDepartment, List<User> users, List<Department> allDepartments) {
+        List<User> usersInDept = users.stream().filter(user -> rootDepartment.getId().equals(user.getDepartmentId())).collect(Collectors.toList());
+        if (!usersInDept.isEmpty()) {
+            List<Department> departments = new ArrayList<>();
+            for (User u : usersInDept) {
+                Department userAsDept = new Department();
+                userAsDept.setId(u.getId());
+                userAsDept.setName(u.getName());
+                departments.add(userAsDept);
+            }
+            rootDepartment.setChildren(departments);
+        }
+        List<Department> children = allDepartments.stream().filter(dept -> rootDepartment.getId().equals(dept.getParentId())).collect(Collectors.toList());
+        if (!children.isEmpty()) {
+            if (rootDepartment.getChildren() != null) {
+                rootDepartment.getChildren().addAll(children);
+            } else {
+                rootDepartment.setChildren(children);
+            }
+            for (Department child : children) {
+                iterAllDepartmentAndUsers(child, users, allDepartments);
+            }
+
+        }
+    }
+
+
 }

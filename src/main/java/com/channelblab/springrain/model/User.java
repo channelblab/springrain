@@ -3,11 +3,13 @@ package com.channelblab.springrain.model;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import java.time.LocalDateTime;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -22,7 +24,7 @@ public class User {
     private String name;
     @Email
     private String email;
-    @JsonSerialize(using =NullSerializer.class)
+    @JsonSerialize(using = NullSerializer.class)
     private String pass;
     @TableField(exist = false)
     private Boolean online;
@@ -34,4 +36,9 @@ public class User {
 
     @TableField(exist = false)
     private String departmentName;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateTime;
 }

@@ -29,6 +29,12 @@ public class DepartmentController {
         return departmentService.tree();
     }
 
+    @Operation(summary = "部门人员树")
+    @GetMapping("/deptUserTree")
+    public List<Department> deptUserTree() {
+        return departmentService.deptUserTree();
+    }
+
     @Operation(summary = "删除部门")
     @DeleteMapping("/delete/{departmentId}")
     public void delete(@PathVariable @NotBlank String departmentId) {

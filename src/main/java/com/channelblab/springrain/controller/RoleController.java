@@ -28,9 +28,9 @@ public class RoleController {
 
 
     @Operation(summary = "新增或修改角色")
-    @PostMapping("add")
-    public void add(@RequestBody @Validated Role role) {
-        roleService.add(role);
+    @PostMapping("/addOrUpdate")
+    public void addOrUpdate(@RequestBody @Validated Role role) {
+        roleService.addOrUpdate(role);
     }
 
     @Operation(summary = "分页查询")
