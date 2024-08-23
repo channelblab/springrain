@@ -12,9 +12,11 @@ import com.channelblab.springrain.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,12 +38,13 @@ public class RoleService {
     public void addOrUpdate(Role role) {
         if (ObjectUtils.isEmpty(role.getId())) {
             //add
-            role.setCreateTime(LocalDateTime.now());
-            role.setUpdateTime(LocalDateTime.now());
+            role.setType("CUSTOM");
+            role.setCreateTime(new Date());
+            role.setUpdateTime(new Date());
             roleDao.insert(role);
         } else {
             //update
-            role.setUpdateTime(LocalDateTime.now());
+            role.setUpdateTime(new Date());
             roleDao.updateById(role);
         }
         //fully update
@@ -67,7 +70,29 @@ public class RoleService {
     public IPage<Role> page(Integer page, Integer size, String name) {
         IPage<Role> pageParam = new Page<>(page, size);
         LambdaQueryWrapper<Role> queryWrapper = Wrappers.lambdaQuery(Role.class).like(!ObjectUtils.isEmpty(name), Role::getName, name);
-        return roleDao.selectPage(pageParam, queryWrapper);
+        IPage<Role> roleIPage = roleDao.selectPage(pageParam, queryWrapper);
+        List<Role> records = roleIPage.getRecords();
+        if (!CollectionUtils.isEmpty(records)) {
+            records.forEach(item -> {
+                List<RolePermission> rolePermissions = rolePermissionDao.selectList(Wrappers.lambdaQuery(RolePermission.class).eq(RolePermission::getRoleId, item.getId()));
+                List<Permission> permissions = new ArrayList<>();
+                for (RolePermission rolePermission : rolePermissions) {
+                    Permission permission = new Permission();
+                    permission.setId(rolePermission.getPermissionId());
+                    permissions.add(permission);
+                }
+                item.setPermissions(permissions);
+                List<UserRole> userRoles = userRoleDao.selectList(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, item.getId()));
+                List<User> users = new ArrayList<>();
+                for (UserRole userRole : userRoles) {
+                    User user = new User();
+                    user.setId(userRole.getUserId());
+                    users.add(user);
+                }
+                item.setUsers(users);
+            });
+        }
+        return roleIPage;
     }
 
     @Transactional
@@ -81,6 +106,7 @@ public class RoleService {
         }
         roleDao.deleteById(id);
         rolePermissionDao.delete(Wrappers.lambdaQuery(RolePermission.class).eq(RolePermission::getRoleId, id));
+        userRoleDao.delete(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, id));
 
     }
 }
