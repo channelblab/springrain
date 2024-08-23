@@ -14,5 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserDao extends BaseMapper<User> {
-    IPage<User> selectCustomPage(IPage<User> param, @Param("departmentId") String departmentId, @Param("userId") String userId, @Param("name") String name);
+    IPage<User> selectCustomPage(IPage<User> param, @Param("departmentId") String departmentId, @Param("searchKey") String searchKey);
 }

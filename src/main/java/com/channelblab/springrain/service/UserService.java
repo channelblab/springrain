@@ -57,9 +57,9 @@ public class UserService {
         UserUtil.kickOut(userId);
     }
 
-    public IPage<User> page(Integer page, Integer size, String userId, String name, String departmentId) {
+    public IPage<User> page(Integer page, Integer size, String searchKey, String departmentId) {
         IPage<User> param = new Page<>(page, size);
-        IPage<User> userIPage = userDao.selectCustomPage(param, departmentId, userId, name);
+        IPage<User> userIPage = userDao.selectCustomPage(param, departmentId, searchKey);
         List<User> records = userIPage.getRecords();
         if (!CollectionUtils.isEmpty(records)) {
             List<String> onlineUserIds = UserUtil.onlineUsers().stream().map(User::getId).collect(Collectors.toList());

@@ -46,16 +46,34 @@ public class DepartmentService {
 
     @Transactional
     public void delete(String departmentId) {
-        Department department = departmentDao.selectById(departmentId);
-        department.setEnable(false);
-        departmentDao.updateById(department);
+        List<Department> departments = departmentDao.selectList(Wrappers.lambdaQuery(Department.class).eq(Department::getEnable, true));
+        List<Department> departmentList = departments.stream().filter(dept -> dept.getId().equals(departmentId)).collect(Collectors.toList());
+        if (!departmentList.isEmpty()) {
+            Department department = departmentList.get(0);
+            List<Department> allDepts = new ArrayList<>();
+            allDepts.add(department);
+            iterAllSubDept(allDepts, department, departments);
+            for (Department dept : allDepts) {
+                dept.setEnable(false);
+                departmentDao.updateById(dept);
+            }
+            List<String> idList = allDepts.stream().map(Department::getId).collect(Collectors.toList());
+            List<User> users = userDao.selectList(Wrappers.lambdaQuery(User.class).eq(User::getEnable, true).in(User::getDepartmentId, idList));
+            users.forEach(user -> {
+                user.setDepartmentId(null);
+                userDao.updateById(user);
+            });
+        }
+    }
 
-        List<User> users = userDao.selectList(Wrappers.lambdaQuery(User.class).eq(User::getEnable, true).eq(User::getDepartmentId, departmentId));
-
-        users.forEach(user -> {
-            user.setDepartmentId(null);
-            userDao.updateById(user);
-        });
+    private void iterAllSubDept(List<Department> allDepts, Department department, List<Department> departments) {
+        List<Department> collect = departments.stream().filter(dept -> department.getId().equals(dept.getParentId())).collect(Collectors.toList());
+        if (!collect.isEmpty()) {
+            allDepts.addAll(collect);
+            for (Department subDept : collect) {
+                iterAllSubDept(allDepts, subDept, departments);
+            }
+        }
     }
 
     public List<Department> deptUserTree() {

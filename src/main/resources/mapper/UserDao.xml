@@ -16,11 +16,9 @@
             <if test="departmentId != null and departmentId != ''">
                 AND system_user.department_id = #{departmentId}
             </if>
-            <if test="userId != null and userId != ''">
-                AND system_user.id = #{userId}
-            </if>
-            <if test="name != null and name != ''">
-                AND system_user.`name` LIKE CONCAT('%',#{name},'%')
+            <if test="searchKey != null and searchKey != ''">
+                AND system_user.id = #{searchKey} or system_user.name LIKE
+                CONCAT('%',#{searchKey},'%') or system_user.email=#{searchKey}
             </if>
         </where>
     </select>
