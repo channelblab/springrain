@@ -52,9 +52,6 @@ public class PermissionAspect {
         }
 
         List<Permission> permissions = permissionService.selectAllPermission(UserHolder.getUser().getId());
-        //        if (permissions == null) {
-        //            throw new BusinessException("permission_not_config");
-        //        }
         if (!passValidation(requestURI, permissions)) {
             throw new BusinessException(Response.NO_PERMISSION, "no_permission_msg");
         }

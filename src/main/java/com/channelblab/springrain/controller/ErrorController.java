@@ -20,7 +20,7 @@ public class ErrorController {
     @Hidden
     @GetMapping
     public void error() {
-        throw new BusinessException(Response.COMMON_ERROR_CODE, "common_error");
+        throw new BusinessException(Response.COMMON_ERROR_CODE, "common_error_code_msg");
     }
 
 

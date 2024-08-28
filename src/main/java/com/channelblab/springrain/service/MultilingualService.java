@@ -119,4 +119,9 @@ public class MultilingualService {
         resData.put("frameData", frameData);
         return resData;
     }
+
+    //todo need cache
+    public List<Multilingual> frontedMultilingual() {
+        return multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(Multilingual::getType, "frontend"));
+    }
 }

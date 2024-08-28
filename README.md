@@ -1,15 +1,21 @@
-# SpringRain
 
 <div style="text-align: center;">
+# SpringRain
 
 ![Static Badge](https://img.shields.io/badge/Version_1.0.0)
 ![Static Badge](https://img.shields.io/badge/Version-2-4)
 
 </div>
 
-## 基础哲学
+> 以最快的速度、最简单的形式搭建出基础的项目框架，然后在业务代码中苦苦挣扎！业务类型的框架重要的是业务，切勿在项目中引入过多的新技术用于炫技，请遵循奥卡姆剃刀原则，如无必要不增实体。
 
-**约定大于配置，快速出成果，切勿炫技！**
+## 亮点
+
+- 原生多语言支持
+- 极简代码
+- 快速使用
+- 灵活扩展
+
 
 
 ## 设计根据

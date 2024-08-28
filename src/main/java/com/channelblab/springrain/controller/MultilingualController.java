@@ -37,6 +37,12 @@ public class MultilingualController {
     private MultilingualService multilingualService;
 
 
+    @Operation(summary = "前端多语言列表")
+    @GetMapping("/frontedMultilingual")
+    public List<Multilingual> frontedMultilingual() {
+        return multilingualService.frontedMultilingual();
+    }
+
     @NoLog
     @Operation(summary = "导出Excel")
     @NoResponseHandle

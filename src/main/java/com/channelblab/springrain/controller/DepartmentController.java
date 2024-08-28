@@ -23,6 +23,13 @@ public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
+
+    @Operation(summary = "新增或修改部门")
+    @PostMapping("/addOrUpdate")
+    public void addOrUpdate(@RequestBody Department department) {
+        departmentService.addOrUpdate(department);
+    }
+
     @Operation(summary = "部门树")
     @GetMapping("/tree")
     public List<Department> tree() {

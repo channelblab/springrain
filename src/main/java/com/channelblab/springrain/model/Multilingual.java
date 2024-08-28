@@ -21,4 +21,7 @@ public class Multilingual {
     private String symbolValue;
     //关于当前字段的描述
     private String symbolDescribe;
+
+    //类型，frontend backend
+    private String type;
 }

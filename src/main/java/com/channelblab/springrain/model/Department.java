@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class Department {
     private String id;
     private String parentId;
     private String managerId;
+    @NotBlank
     private String name;
     private Boolean enable;
 
