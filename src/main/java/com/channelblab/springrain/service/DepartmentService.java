@@ -140,4 +140,9 @@ public class DepartmentService {
         }
 
     }
+
+    public List<Department> search(String key) {
+
+        return departmentDao.selectList(Wrappers.lambdaQuery(Department.class).like(Department::getName, key).or().eq(Department::getId, key));
+    }
 }
