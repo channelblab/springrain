@@ -1,4 +1,3 @@
-
 <div style="text-align: center;">
 # SpringRain
 
@@ -7,7 +6,8 @@
 
 </div>
 
-> 以最快的速度、最简单的形式搭建出基础的项目框架，然后在业务代码中苦苦挣扎！业务类型的框架重要的是业务，切勿在项目中引入过多的新技术用于炫技，请遵循奥卡姆剃刀原则，如无必要不增实体。
+>
+以最快的速度、最简单的形式搭建出基础的项目框架，然后在业务代码中苦苦挣扎！业务类型的框架重要的是业务，切勿在项目中引入过多的新技术用于炫技，请遵循奥卡姆剃刀原则，如无必要不增实体。
 
 ## 亮点
 
@@ -16,11 +16,10 @@
 - 快速使用
 - 灵活扩展
 
-
-
 ## 设计根据
 
 ### 为什么http请求头的大量使用？
+
 严格意义来说，请求参数放在什么地方传都是可以的。但是在项目中，为什么会将一部分数据放在请求头中进行传输？
 
 + 请求头中传输的是公共、通用型的参数。因为其是公共的，放在任何请求参数中显得不合适。
@@ -28,70 +27,60 @@
 
 什么样的数据应该放在请求头中？
 
+## 系统功能
 
+### 1. 组织架构管理
 
+在组织架构管理中对部门及人员进行管理，在部门树结构上进行快速修改、新增子部门、删除部门
 
+-
+删除部门，系统将会递归删除所有此部门下的子部门，并将所有相关人员所属部门Id置空。因此删除部门以后，以前绑定到部门的人员将会是游离状态，他们不属于任何部门；如果相对游离状态人员进行部门管理必须选择空部门进行操作。
+-
+单个新增人员，在人员进行单个新增时，需要选中人员所属的部门进行新增，系统不允许新增部门为空的人员，逻辑上将一切人员都需有所归属，新增人员时，人员默认密码为Abc@123
 
+### 2. 角色管理
 
+系统底层角色权限基于RBAC经典模型进行角色权限的管理，整个系统中对于权限的管理出发点基于角色，维护好角色数据是系统的基础；系统虽然开放用户角色一对多，但是鉴于最佳实践，推荐用户角色一对一，也就是说在角色管理时，需充分考虑实际需求进行设置。
 
-## 数据库初始化
+### 3. 权限管理
 
-```yaml
+此页面只归开发人员查看，仅在开发过程中使用。使用excel对数据进行导出修改后导入系统
 
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/springrain?servertimezone=UTC&useUnicode=true&charaterEncoding=utf-8&createDatabaseIfNotExist=true
-    username: root
-    password: dengyi1991
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:database/schema.sql
-      data-locations: classpath:database/data.sql
-      encoding: utf-8
-      continue-on-error: true
-      platform: mysql
+### 4. 多语言管理
 
+### 5. 系统日志
+
+系统默认情况下会针对所有接口进行日志记录，如此设计的原因是，后台管理系统，基本上所有接口的操作都要进行日志的记录，方便后续追溯；
+但是，在实践过程中，大数据量接口及流式接口记录日志没有实际意义，所以推荐大数据居量返回的接口或设计对文件进行操作的接口，请使用`@NoLog`
+注解进行标注，不进行日志处理及存储。
+
+例如：
+```java
+
+    @NoLog
+    @Operation(summary = "导入多语言Excel")
+    @PostMapping("/importExcel")
+    public void importExcel(@RequestParam @NotNull MultipartFile file) {
+        multilingualService.importExcel(file);
+    }
+    
 ```
-
-## 系统操作日志
-
-大数据居量返回的接口，请使用`@NoLog`注解进行标注，不进行日志拦截
-
-## 权限
-
-### 菜单、按钮、API权限
-
-### 数据权限
-数据的权限，没有通用的解决方案，只能在代码中进行处理
 
 
 ## 如何使用？
 
-1. 添加maven依赖
-```xml
++ 后端工程
+  - 创建springboot工程
+  - 添加springrain依赖
+    ```xml
+    <dependency>
+        <groupId>com.lmax</groupId>
+        <artifactId>disruptor</artifactId>
+        <version>3.4.2</version>
+    </dependency>
+    ```
+  - 初始化配置
+  - 启动项目，基础功能嵌入成功
+  - 开发业务逻辑
 
-<dependency>
-    <groupId>com.lmax</groupId>
-    <artifactId>disruptor</artifactId>
-    <version>3.4.2</version>
-</dependency>
 
-```
-项目最新代码为master分支
-
-2. 新建springboot工程
-3. 将本项目在启动类上引入
-```java
-
-@SpringBootApplication
-@Import(com.channelblab.springrain.SpringRainApplication.class)
-public class DemoApp {
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApp.class, args);
-    }
-}
-
-```
-4. 愉快开发
