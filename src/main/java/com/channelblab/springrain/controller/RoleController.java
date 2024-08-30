@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * controller for role
@@ -37,6 +38,12 @@ public class RoleController {
     @GetMapping("/page")
     public IPage<Role> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String name) {
         return roleService.page(page, size, name);
+    }
+
+    @Operation(summary = "下拉查询列表")
+    @GetMapping("/forSelect")
+    public List<Role> forSelect() {
+        return roleService.forSelect();
     }
 
     @Operation(summary = "删除角色")

@@ -11,11 +11,11 @@ import com.channelblab.springrain.common.utils.PasswordUtil;
 import com.channelblab.springrain.common.utils.UserUtil;
 import com.channelblab.springrain.dao.PermissionDao;
 import com.channelblab.springrain.dao.UserDao;
-import com.channelblab.springrain.model.Permission;
-import com.channelblab.springrain.model.User;
-import com.channelblab.springrain.model.UserInfoExt;
+import com.channelblab.springrain.dao.UserRoleDao;
+import com.channelblab.springrain.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -33,6 +33,8 @@ public class UserService {
     private UserDao userDao;
     @Autowired
     private PermissionDao permissionDao;
+    @Autowired
+    private UserRoleDao userRoleDao;
 
 
     public String loginByEmail(User user) {
@@ -68,7 +70,13 @@ public class UserService {
                 if (onlineUserIds.contains(record.getId())) {
                     record.setOnline(true);
                 }
+
+                List<Role> roles = userRoleDao.selectAllRolesByUserId(record.getId());
+                record.setRoles(roles);
+
             }
+
+
         }
         return userIPage;
     }
@@ -91,5 +99,24 @@ public class UserService {
     public IPage<User> byDepartmentId(String departmentId, Integer page, Integer size) {
         IPage<User> param = new Page<>(page, size);
         return userDao.selectPage(param, Wrappers.lambdaQuery(User.class).eq(User::getEnable, true).eq(User::getDepartmentId, departmentId));
+    }
+
+    @Transactional
+    public void addOrUpdate(User user) {
+        User userExist = userDao.selectById(user.getId());
+        if (userExist == null) {
+            userDao.insert(user);
+        } else {
+            userDao.updateById(user);
+        }
+
+        userRoleDao.delete(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, user.getId()));
+        List<Role> roles = user.getRoles();
+        roles.forEach(item -> {
+            UserRole ur = new UserRole();
+            ur.setUserId(user.getId());
+            ur.setRoleId(item.getId());
+            userRoleDao.insert(ur);
+        });
     }
 }

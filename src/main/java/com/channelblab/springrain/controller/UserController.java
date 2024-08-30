@@ -72,4 +72,11 @@ public class UserController {
     }
 
 
+    @Operation(summary = "新增或修改用户")
+    @PostMapping("/addOrUpdate")
+    public void addOrUpdate(@RequestBody User user) {
+        userService.addOrUpdate(user);
+    }
+
+
 }

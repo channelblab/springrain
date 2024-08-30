@@ -10,6 +10,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -41,4 +42,7 @@ public class User {
     private LocalDateTime createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+
+    @TableField(exist = false)
+    private List<Role> roles;
 }

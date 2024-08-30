@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelblab.springrain.dao.UserRoleDao">
+    <select id="selectAllRolesByUserId"
+            resultType="com.channelblab.springrain.model.Role">
+
+        SELECT
+            perm_role.id,
+            perm_role.`name`,
+            perm_role.detail,
+            perm_role.create_time,
+            perm_role.update_time,
+            perm_role.type
+        FROM
+            perm_role
+                INNER JOIN perm_user_role ON perm_user_role.role_id = perm_role.id
+        WHERE
+            perm_user_role.user_id = #{id}
+    </select>
+</mapper>

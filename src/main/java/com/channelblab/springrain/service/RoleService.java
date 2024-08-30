@@ -109,4 +109,8 @@ public class RoleService {
         userRoleDao.delete(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, id));
 
     }
+
+    public List<Role> forSelect() {
+        return roleDao.selectList(Wrappers.lambdaQuery(Role.class));
+    }
 }

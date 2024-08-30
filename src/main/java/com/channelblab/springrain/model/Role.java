@@ -30,7 +30,7 @@ public class Role {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    private String type;
+    private String type;//自定义或者内置
 
     @NotEmpty
     @TableField(exist = false)
