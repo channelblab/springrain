@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,8 +106,12 @@ public class UserService {
     public void addOrUpdate(User user) {
         User userExist = userDao.selectById(user.getId());
         if (userExist == null) {
+            user.setEnable(true);
+            user.setCreateTime(LocalDateTime.now());
+            user.setUpdateTime(LocalDateTime.now());
             userDao.insert(user);
         } else {
+            user.setUpdateTime(LocalDateTime.now());
             userDao.updateById(user);
         }
 
