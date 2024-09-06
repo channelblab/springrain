@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @description：log controller
  * @modified By：
  */
-@Tag(name = "框架-系统日志接口")
+@Tag(name = "框架-系统日志接口-目前未使用")
 @RestController
 @RequestMapping("/systemLogger")
 public class SystemLoggerController {
