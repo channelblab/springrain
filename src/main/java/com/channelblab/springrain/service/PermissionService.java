@@ -3,7 +3,6 @@ package com.channelblab.springrain.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.PermissionDao;
 import com.channelblab.springrain.model.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,9 @@ public class PermissionService {
 
     public List<Permission> tree() {
         List<Permission> allPermissions = permissionDao.selectList(null);
-        for (Permission allPermission : allPermissions) {
-            allPermission.setName(MultilingualUtil.getValue(allPermission.getName()));
-        }
+//        for (Permission allPermission : allPermissions) {
+//            allPermission.setName(MultilingualUtil.getValue(allPermission.getName()));
+//        }
 
 
         List<Permission> firstPermissions = allPermissions.stream().filter(k -> k.getParentId() == null).collect(Collectors.toList());

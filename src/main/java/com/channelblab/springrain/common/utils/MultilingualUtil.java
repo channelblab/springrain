@@ -28,15 +28,14 @@ public class MultilingualUtil {
     }
 
     public static String getValue(String symbol) {
-        String language = LocaleContextHolder.getLocale().getLanguage() + "_" + LocaleContextHolder.getLocale().getCountry();
-
+        String language = LocaleContextHolder.getLocale().toString().replace("_", "-").toLowerCase();
         List<Multilingual> multilingualList = (List<Multilingual>) cache.getIfPresent(language);
         if (multilingualList == null) {
-            LOGGER.warn("多语言数据未初始化，多语言key为:{}", symbol);
+            LOGGER.warn("多语言数据未初始化，语言为:{},多语言key为:{}", language, symbol);
             return symbol;
         }
         if (multilingualList.isEmpty()) {
-            LOGGER.warn("多语言数据为空，多语言key为:{}", symbol);
+            LOGGER.warn("多语言数据为空，语言为:{},多语言key为:{}", language, symbol);
             return symbol;
         }
         //查找对应的value
@@ -53,6 +52,6 @@ public class MultilingualUtil {
 
     public static void updateData(List<Multilingual> multilingualList) {
         Map<String, List<Multilingual>> groupedByLang = multilingualList.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
-        groupedByLang.forEach((lang, list) -> cache.put(lang, list));
+        groupedByLang.forEach((lang, list) -> cache.put(lang.toLowerCase(), list));
     }
 }
