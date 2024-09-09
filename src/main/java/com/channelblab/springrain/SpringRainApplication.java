@@ -1,5 +1,6 @@
 package com.channelblab.springrain;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.MultilingualDao;
 import com.channelblab.springrain.model.Multilingual;
@@ -28,7 +29,7 @@ public class SpringRainApplication {
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
-        List<Multilingual> multilingualList = multilingualDao.selectList(null);
+        List<Multilingual> multilingualList = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(Multilingual::getType, "backend"));
         MultilingualUtil.updateData(multilingualList);
 
     }

@@ -37,9 +37,12 @@ public class MultilingualController {
     private MultilingualService multilingualService;
 
 
+    @NoLogin
+    @NoLog
+    @NoAuth
     @Operation(summary = "前端多语言列表")
     @GetMapping("/frontedMultilingual")
-    public List<Multilingual> frontedMultilingual() {
+    public Map<String, List<Multilingual>> frontedMultilingual() {
         return multilingualService.frontedMultilingual();
     }
 
@@ -80,6 +83,7 @@ public class MultilingualController {
 
     @NoLogin
     @NoAuth
+    @NoLog
     @Operation(summary = "语言列表")
     @GetMapping("/langList")
     public List<Multilingual> langList() {

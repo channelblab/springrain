@@ -34,12 +34,13 @@ public class MultilingualService {
                 .like(!ObjectUtils.isEmpty(symbolDescribe), Multilingual::getSymbolDescribe, symbolDescribe).orderByAsc(Multilingual::getSymbol));
         List<Map<String, Object>> listRes = new ArrayList<>();
         //zh_CN as the default standard language
-        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh_CN")).collect(Collectors.toList());
+        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh-CN")).collect(Collectors.toList());
         Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
         standardLang.forEach(standard -> {
             Map<String, Object> mapRes = new HashMap<>();
             mapRes.put("id", standard.getId());
             mapRes.put("symbol", standard.getSymbol());
+            mapRes.put("type", standard.getType());
             mapRes.put("symbolValue", standard.getSymbolValue());
             mapRes.put("symbolDescribe", standard.getSymbolDescribe());
             for (String key : totalLangData.keySet()) {
@@ -121,7 +122,8 @@ public class MultilingualService {
     }
 
     //todo need cache
-    public List<Multilingual> frontedMultilingual() {
-        return multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(Multilingual::getType, "frontend"));
+    public Map<String, List<Multilingual>> frontedMultilingual() {
+        List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(Multilingual::getType, "frontend"));
+        return multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
     }
 }
