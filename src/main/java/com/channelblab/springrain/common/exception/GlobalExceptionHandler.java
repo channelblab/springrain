@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return MultilingualUtil.getValue(e.getMessage());
+                return MultilingualUtil.getValue("common_error_code_msg");
             }
 
             @Override
@@ -118,12 +118,12 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return errors.toString();
+                return MultilingualUtil.getValue("common_error_code_msg");
             }
 
             @Override
             public Object getData() {
-                return null;
+                return errors.toString();
             }
         };
     }
@@ -149,12 +149,12 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return me.getMessage();
+                return MultilingualUtil.getValue("common_error_code_msg");
             }
 
             @Override
             public Object getData() {
-                return null;
+                return me.getMessage();
             }
         };
     }

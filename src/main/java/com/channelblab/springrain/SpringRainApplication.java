@@ -29,7 +29,7 @@ public class SpringRainApplication {
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
-        List<Multilingual> multilingualList = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(Multilingual::getType, "backend"));
+        List<Multilingual> multilingualList = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class));
         MultilingualUtil.updateData(multilingualList);
 
     }
