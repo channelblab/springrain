@@ -1,11 +1,11 @@
 package com.channelblab.springrain.common.utils;
 
+import com.channelblab.springrain.common.holder.LangHolder;
 import com.channelblab.springrain.model.Multilingual;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class MultilingualUtil {
     }
 
     public static String getValue(String symbol) {
-        String language = LocaleContextHolder.getLocale().toString().replace("_", "-").toLowerCase();
+        String language = LangHolder.getLang();
         List<Multilingual> multilingualList = (List<Multilingual>) cache.getIfPresent(language);
         if (multilingualList == null) {
             LOGGER.warn("多语言数据未初始化，语言为:{},多语言key为:{}", language, symbol);
@@ -52,6 +52,6 @@ public class MultilingualUtil {
 
     public static void updateData(List<Multilingual> multilingualList) {
         Map<String, List<Multilingual>> groupedByLang = multilingualList.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
-        groupedByLang.forEach((lang, list) -> cache.put(lang.toLowerCase(), list));
+        groupedByLang.forEach((lang, list) -> cache.put(lang, list));
     }
 }
