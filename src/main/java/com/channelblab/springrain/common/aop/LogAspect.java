@@ -49,6 +49,7 @@ public class LogAspect {
     private ObjectMapper om;
     @Autowired
     private MessageEventProducer messageEventProducer;
+    private static final int MAX_LENGTH_THRESHOLD = 1000;
 
     @Around("execution(* *..controller.*..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -61,7 +62,7 @@ public class LogAspect {
         String requestDataString = null;
         if (method.equals("GET") || method.equals("DELETE")) {
             Map<String, String> parameters = getParameters(request);
-            if (parameters.keySet().size()!=0) {
+            if (parameters.keySet().size() != 0) {
                 //todo 不能序列化的东西不处理
                 requestDataString = om.writeValueAsString(parameters);
             }
