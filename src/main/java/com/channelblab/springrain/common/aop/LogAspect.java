@@ -11,6 +11,7 @@ import com.channelblab.springrain.common.utils.MessageEventProducer;
 import com.channelblab.springrain.model.Log;
 import com.channelblab.springrain.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -124,7 +125,9 @@ public class LogAspect {
     }
 
     private String getRequestBody(ProceedingJoinPoint joinPoint) throws IOException {
+
         ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
         StringBuilder sb = new StringBuilder();
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {

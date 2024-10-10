@@ -60,7 +60,7 @@ public class PermissionService {
 
     //TODO need to use cache for speed up
     public List<Permission> selectAllPermission(String userId) {
-        return permissionDao.selectAllPermissionByUserId(userId);
+        return permissionDao.selectAllPermissionUriByUserId(userId);
     }
 
     @Transactional

@@ -16,5 +16,40 @@
         WHERE perm_user_role.user_id = #{userId}
 
     </select>
+    <select id="selectAllPermissionSymbolsByUserId"
+            resultType="java.lang.String">
+
+        SELECT
+        perm_permission.symbol
+        FROM
+        perm_permission
+        LEFT JOIN perm_role_permission ON perm_role_permission.permission_id =
+        perm_permission.id
+        LEFT JOIN perm_user_role ON perm_user_role.role_id =
+        perm_role_permission.role_id
+        WHERE
+        perm_permission.type != 'API'
+        <if test="userId !=null and userId != '' and userId != 1">
+            AND perm_user_role.user_id = #{userId}
+        </if>
+
+    </select>
+    <select id="selectAllPermissionUriByUserId"
+            resultType="com.channelblab.springrain.model.Permission">
+        SELECT *
+        FROM perm_permission
+        INNER JOIN perm_role_permission
+        ON perm_role_permission.permission_id =
+        perm_permission.id
+        INNER JOIN perm_user_role ON perm_user_role.role_id =
+        perm_role_permission.role_id
+
+        <where>
+            <if test="userId !=null and userId != '' and userId != 1">
+                AND perm_user_role.user_id = #{userId}
+            </if>
+        </where>
+
+    </select>
 
 </mapper>

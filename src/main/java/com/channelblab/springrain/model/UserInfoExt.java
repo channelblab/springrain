@@ -15,4 +15,5 @@ public class UserInfoExt {
     private User user;
     private List<String> buttonPermissions;
     private List<Permission> menuPermissions;
+    private List<String> permissionSymbols;
 }

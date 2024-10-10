@@ -3,7 +3,6 @@ package com.channelblab.springrain.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.channelblab.springrain.common.enums.PermissionType;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.response.Response;
@@ -12,7 +11,10 @@ import com.channelblab.springrain.common.utils.UserUtil;
 import com.channelblab.springrain.dao.PermissionDao;
 import com.channelblab.springrain.dao.UserDao;
 import com.channelblab.springrain.dao.UserRoleDao;
-import com.channelblab.springrain.model.*;
+import com.channelblab.springrain.model.Role;
+import com.channelblab.springrain.model.User;
+import com.channelblab.springrain.model.UserInfoExt;
+import com.channelblab.springrain.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,14 +88,8 @@ public class UserService {
         UserInfoExt userInfoExt = new UserInfoExt();
         User user = userDao.selectById(UserHolder.getUser().getId());
         userInfoExt.setUser(user);
-        List<Permission> permissions = permissionDao.selectAllPermissionByUserId(user.getId());
-
-        //button permission
-        List<String> permissionButtons = permissions.stream().filter(k -> k.getType().equals(PermissionType.BUTTON)).map(Permission::getSymbol).collect(Collectors.toList());
-        userInfoExt.setButtonPermissions(permissionButtons);
-        //menu permission
-        List<Permission> menuPermissions = permissions.stream().filter(k -> k.getType().equals(PermissionType.MENU)).collect(Collectors.toList());
-        userInfoExt.setMenuPermissions(menuPermissions);
+        List<String> permissionSymbols = permissionDao.selectAllPermissionSymbolsByUserId(user.getId());
+        userInfoExt.setPermissionSymbols(permissionSymbols);
         return userInfoExt;
     }
 

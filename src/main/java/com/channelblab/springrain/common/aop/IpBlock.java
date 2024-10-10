@@ -1,9 +1,7 @@
 package com.channelblab.springrain.common.aop;
 
-import com.channelblab.springrain.common.anotations.NoRateLimit;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.response.Response;
-import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.IpUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -27,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @Order(1)
 @Aspect
 @Component
-public class RateLimit {
+public class IpBlock {
     private static final Integer DEFAULT_EXPIRE_MILLION_SECONDS = 300;
     private static final Cache<Object, Object> cache;
 
@@ -36,18 +34,19 @@ public class RateLimit {
     }
 
     @Before("execution(* *..controller.*..*(..))")
-    public void doLimit(JoinPoint joinPoint) throws NoSuchMethodException {
-        if (AnnotationUtil.containAnnotation(joinPoint, NoRateLimit.class)) {
-            return;
-        }
-        // if set -1 do not use rate limiter
-        if (DEFAULT_EXPIRE_MILLION_SECONDS.equals(-1)) {
-            return;
-        }
+    public void doLimit(JoinPoint joinPoint) {
+
+
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String requestURI = request.getRequestURI();
         String remoteIP = IpUtil.remoteIP(request);
+        Integer countTimes = (Integer) cache.getIfPresent(remoteIP);
+        if (countTimes == null) {
+            return;
+        } else {
+
+        }
         // black list
 
         Object ifPresent = cache.getIfPresent(remoteIP + "/" + requestURI);
@@ -62,6 +61,12 @@ public class RateLimit {
         } else {
             cache.put(remoteIP + "/" + requestURI, currentMillis);
         }
+    }
+
+
+    public static void addBlock(String ip) {
+        IpBlock.cache.getIfPresent(ip);
+
     }
 
 }

@@ -155,7 +155,6 @@ public class ExcelUtil {
         for (Permission permission : tree) {
             writePermissionToSheet(sheet, permission, rowIndex);
         }
-
         return workbook;
     }
 
@@ -188,11 +187,11 @@ public class ExcelUtil {
                 Row row = sheet.getRow(rowStartIndex);
                 Permission permission = new Permission();
                 permission.setId(String.valueOf(row.getCell(0)));
-                permission.setParentId(row.getCell(1) != null ? String.valueOf(row.getCell(1)) : null);
+                permission.setParentId(row.getCell(1) != null && !row.getCell(1).getStringCellValue().isEmpty() ? String.valueOf(row.getCell(1)) : null);
                 permission.setName(String.valueOf(row.getCell(2)));
-                permission.setSymbol(row.getCell(3) != null ? String.valueOf(row.getCell(3)) : null);
+                permission.setSymbol(row.getCell(3) != null && !row.getCell(3).getStringCellValue().isEmpty() ? String.valueOf(row.getCell(3)) : null);
                 permission.setType(PermissionType.valueOf(String.valueOf(row.getCell(4))));
-                permission.setUris(row.getCell(5) != null ? String.valueOf(row.getCell(5)) : null);
+                permission.setUris(row.getCell(5) != null && !row.getCell(5).getStringCellValue().isEmpty() ? String.valueOf(row.getCell(5)) : null);
                 res.add(permission);
                 rowStartIndex++;
             }
