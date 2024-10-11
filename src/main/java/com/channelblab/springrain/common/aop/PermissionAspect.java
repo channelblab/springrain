@@ -46,7 +46,7 @@ public class PermissionAspect {
         if (UserHolder.getUser() == null) {
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
-        //todo we need a debug mode for develop
+        //todo we need a develop mode
         if (UserHolder.getUser().getId().equals("1")) {
             return;
         }

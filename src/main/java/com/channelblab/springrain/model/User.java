@@ -23,6 +23,9 @@ import java.util.List;
 public class User {
     private String id;
     private String name;
+
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
+    private String avatar;
     @Email
     private String email;
     @JsonSerialize(using = NullSerializer.class)
