@@ -59,10 +59,18 @@ public class PermissionAspect {
         }
     }
 
+    //todo if fully user restful ,some uri can not pass validation
     private boolean passValidation(String requestURI, List<Permission> permissions) {
         // 使用stream处理并收集所有的uri到Set中，直接避免重复
         Set<String> uriSet = permissions.stream().flatMap(permission -> Arrays.stream(permission.getUris().split(","))).collect(Collectors.toSet());
         // 检查requestURI是否存在于uriSet中
+        //todo ---------2024-10-14
+
+        //        for (String uri : uriSet) {
+        //            if (requestURI.contains(uri)) {
+        //                return true;
+        //            }
+        //        }
         return uriSet.contains(requestURI);
     }
 
