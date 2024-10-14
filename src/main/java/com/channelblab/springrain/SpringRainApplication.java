@@ -27,10 +27,10 @@ public class SpringRainApplication {
     @Autowired
     private MultilingualDao multilingualDao;
 
+    //todo we load every  frequently use things into system cache,and we need to reload it when things change by apis
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
         List<Multilingual> multilingualList = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class));
         MultilingualUtil.updateData(multilingualList);
-
     }
 }

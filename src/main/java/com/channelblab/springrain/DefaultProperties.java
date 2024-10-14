@@ -1,6 +1,7 @@
 package com.channelblab.springrain;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -9,6 +10,8 @@ import lombok.Data;
  * @modified By：
  */
 @Data
+@Component
 public class DefaultProperties {
     private String newUserPass = "abc123";
+    private Boolean openDevMode = true;
 }
