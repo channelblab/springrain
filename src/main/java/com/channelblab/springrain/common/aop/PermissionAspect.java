@@ -1,6 +1,5 @@
 package com.channelblab.springrain.common.aop;
 
-import com.channelblab.springrain.DefaultProperties;
 import com.channelblab.springrain.common.anotations.NoAuth;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.holder.UserHolder;
@@ -12,6 +11,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,11 +32,10 @@ import java.util.stream.Collectors;
 @Order(3)
 @Aspect
 @Component
+@ConditionalOnProperty(name = "aop.apipermission", matchIfMissing = true)
 public class PermissionAspect {
     @Autowired
     private PermissionService permissionService;
-    @Autowired
-    private DefaultProperties properties;
 
     @Before("execution(* *..controller.*..*(..))")
     public void doPermission(JoinPoint joinPoint) throws Throwable {
@@ -48,10 +47,6 @@ public class PermissionAspect {
         String requestURI = request.getRequestURI();
         if (UserHolder.getUser() == null) {
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
-        }
-        //we use this to strip api validation when we are in dev
-        if (properties.getOpenDevMode()) {
-            return;
         }
         List<Permission> permissions = permissionService.selectAllPermission(UserHolder.getUser().getId());
         if (!passValidation(requestURI, permissions)) {

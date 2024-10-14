@@ -10,6 +10,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @Order(1)
 @Aspect
 @Component
+@ConditionalOnProperty(name = "aop.ratelimit", matchIfMissing = true)
 public class RateLimit {
     private static final Integer DEFAULT_EXPIRE_MILLION_SECONDS = 300;
     private static final Cache<Object, Object> cache;

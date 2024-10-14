@@ -13,5 +13,4 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultProperties {
     private String newUserPass = "abc123";
-    private Boolean openDevMode = true;
 }
