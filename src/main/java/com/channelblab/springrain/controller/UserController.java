@@ -51,6 +51,7 @@ public class UserController {
     }
 
 
+    @NoLog(fieldNames = "pass")
     @NoLogin
     @NoAuth
     @Operation(summary = "邮箱密码登录")

@@ -33,4 +33,6 @@ public class SpringRainApplication {
         List<Multilingual> multilingualList = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class));
         MultilingualUtil.updateData(multilingualList);
     }
+
+
 }

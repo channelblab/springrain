@@ -26,10 +26,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 从设计原理上来说，日志只应该记录一些危险操作。
@@ -55,36 +55,44 @@ public class LogAspect {
 
     @Around("execution(* *..controller.*..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
+        List<String> skipFields = new ArrayList<>();
         if (AnnotationUtil.containAnnotation(joinPoint, NoLog.class)) {
-            return joinPoint.proceed();
+            //放在类上的都不用管
+            NoLog nolog = (NoLog) AnnotationUtil.getAnnotation(joinPoint, NoLog.class);
+            if (nolog.fieldNames().length == 0) {
+                return joinPoint.proceed();
+            } else {
+                skipFields = Arrays.stream(nolog.fieldNames()).collect(Collectors.toList());
+            }
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        String method = request.getMethod();
-        String requestDataString = null;
-        if (method.equals("GET") || method.equals("DELETE")) {
-            Map<String, String> parameters = getParameters(request);
-            if (parameters.keySet().size() != 0) {
-                //todo 不能序列化的东西不处理
-                requestDataString = om.writeValueAsString(parameters);
-            }
-        } else if (method.equals("POST") || method.equals("PUT")) {
-            requestDataString = getRequestBody(joinPoint);
-        }
+
         Object res = null;
         long startTimeMillis = System.currentTimeMillis();
         long endTimeMillis;
 
         String apiName = null;
-        Object annotation = AnnotationUtil.getAnnotation(joinPoint, Operation.class);
+        Operation annotation = (Operation) AnnotationUtil.getAnnotation(joinPoint, Operation.class);
         if (annotation != null) {
-            Operation apiOperation = (Operation) annotation;
-            apiName = apiOperation.summary();
+            apiName = annotation.summary();
         }
         User user = UserHolder.getUser();
         try {
             res = joinPoint.proceed();
             endTimeMillis = System.currentTimeMillis();
+            String method = request.getMethod();
+            String requestDataString = null;
+            if (method.equals("GET") || method.equals("DELETE")) {
+                Map<String, String> parameters = getParameters(request, skipFields);
+                if (parameters.keySet().size() != 0) {
+                    //todo 不能序列化的东西不处理
+                    requestDataString = om.writeValueAsString(parameters);
+                }
+            } else if (method.equals("POST") || method.equals("PUT")) {
+                requestDataString = getRequestBody(joinPoint, skipFields);
+            }
+
             long costTime = endTimeMillis - startTimeMillis;
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS)
                     .response(res != null ? om.writeValueAsString(res) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId())
@@ -96,6 +104,17 @@ public class LogAspect {
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();
+            String method = request.getMethod();
+            String requestDataString = null;
+            if (method.equals("GET") || method.equals("DELETE")) {
+                Map<String, String> parameters = getParameters(request, skipFields);
+                if (parameters.keySet().size() != 0) {
+                    //todo 不能序列化的东西不处理
+                    requestDataString = om.writeValueAsString(parameters);
+                }
+            } else if (method.equals("POST") || method.equals("PUT")) {
+                requestDataString = getRequestBody(joinPoint, skipFields);
+            }
             long costTime = endTimeMillis - startTimeMillis;
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.FAIL)
                     .response(res != null ? om.writeValueAsString(throwable.getMessage()) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
@@ -112,20 +131,24 @@ public class LogAspect {
 
     /**
      * 获取请求参数
+     *
      * @param request
+     * @param skipFields
      * @return
      */
-    private Map<String, String> getParameters(HttpServletRequest request) {
+    private Map<String, String> getParameters(HttpServletRequest request, List<String> skipFields) {
         Map<String, String> parameters = new HashMap<>();
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String paramName = parameterNames.nextElement();
-            parameters.put(paramName, request.getParameter(paramName));
+            if (!skipFields.contains(paramName)) {
+                parameters.put(paramName, request.getParameter(paramName));
+            }
         }
         return parameters;
     }
 
-    private String getRequestBody(ProceedingJoinPoint joinPoint) throws IOException {
+    private String getRequestBody(ProceedingJoinPoint joinPoint, List<String> skipFields) throws IOException {
 
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
@@ -136,6 +159,17 @@ public class LogAspect {
         for (Object arg : args) {
             //todo  排除非JSON可序列化的参数，例如 HttpServletRequest 或 HttpServletResponse
             if (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)) {
+                skipFields.forEach(item -> {
+                    try {
+                        Field field = arg.getClass().getDeclaredField(item);
+                        field.setAccessible(true);
+                        field.set(arg, null);
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
+
                 sb.append(om.writeValueAsString(arg));
             }
         }
