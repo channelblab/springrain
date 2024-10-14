@@ -10,6 +10,7 @@ import com.channelblab.springrain.common.utils.IpUtil;
 import com.channelblab.springrain.common.utils.MessageEventProducer;
 import com.channelblab.springrain.model.Log;
 import com.channelblab.springrain.model.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
@@ -128,6 +129,8 @@ public class LogAspect {
 
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
+        //do not serial null properties
+        om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         StringBuilder sb = new StringBuilder();
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
