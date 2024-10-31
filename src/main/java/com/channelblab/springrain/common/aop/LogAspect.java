@@ -138,7 +138,7 @@ public class LogAspect {
      * @param skipFields
      * @return
      */
-    private Map<String, String> getParameters(HttpServletRequest request, List<String> skipFields) {
+    private Map<String, String> getParameters(HttpServletRequest request, List<String> skipFields) throws IOException {
         Map<String, String> parameters = new HashMap<>();
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
@@ -147,6 +147,19 @@ public class LogAspect {
                 parameters.put(paramName, request.getParameter(paramName));
             }
         }
+
+        if ("DELETE".equalsIgnoreCase(request.getMethod())) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> bodyParams = objectMapper.readValue(request.getInputStream(), Map.class);
+
+            for (Map.Entry<String, String> entry : bodyParams.entrySet()) {
+                String paramName = entry.getKey();
+                if (!skipFields.contains(paramName)) {
+                    parameters.put(paramName, entry.getValue());
+                }
+            }
+        }
+
         return parameters;
     }
 

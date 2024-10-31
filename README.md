@@ -74,13 +74,19 @@ springrain 本质上是一些公共代码的合集，它不是框架也不是什
 + 后端工程
   - 创建springboot工程
   - 添加springrain依赖
+
+
     ```xml
-    <dependency>
-        <groupId>com.lmax</groupId>
-        <artifactId>disruptor</artifactId>
-        <version>3.4.2</version>
-    </dependency>
+
+
+        <dependency>
+            <groupId>com.channelblab</groupId>
+            <artifactId>springrain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     ```
+
   - 初始化配置
   - 启动项目，基础功能嵌入成功
   - 开发业务逻辑
