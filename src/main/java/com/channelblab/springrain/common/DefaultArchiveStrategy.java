@@ -1,6 +1,7 @@
 package com.channelblab.springrain.common;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -8,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
  * @description：
  * @modified By：
  */
+@Component
 @ConditionalOnMissingBean(ArchiveStrategy.class)
 public class DefaultArchiveStrategy implements ArchiveStrategy {
     @Override
