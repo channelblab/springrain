@@ -64,8 +64,8 @@ public class LogAspect {
         }
         if (AnnotationUtil.containAnnotation(joinPoint, NoLogFields.class)) {
             NoLogFields noLogFields = (NoLogFields) AnnotationUtil.getAnnotation(joinPoint, NoLogFields.class);
-            if (noLogFields.excludeFields().length != 0) {
-                skipFields = Arrays.stream(noLogFields.excludeFields()).collect(Collectors.toList());
+            if (noLogFields.fields().length != 0) {
+                skipFields = Arrays.stream(noLogFields.fields()).collect(Collectors.toList());
             }
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

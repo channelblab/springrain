@@ -7,5 +7,5 @@ import java.lang.annotation.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NoLogFields {
-    String[] excludeFields() default {};
+    String[] fields() default {};
 }
