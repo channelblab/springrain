@@ -3,6 +3,8 @@ package com.channelblab.springrain.model;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * @author     ：dengyi(A.K.A Bear)
  * @date       ：Created in 2024-07-19 14:55
@@ -14,5 +16,6 @@ import lombok.Data;
 public class IpBlock {
     private String id;
     private String ip;
+    private LocalDateTime blockTime;
 
 }
