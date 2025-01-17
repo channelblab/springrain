@@ -1,6 +1,7 @@
 package com.channelblab.springrain.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.channelblab.springrain.common.anotations.DoLog;
 import com.channelblab.springrain.common.anotations.NoAuth;
 import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoLogin;
@@ -51,7 +52,7 @@ public class UserController {
     }
 
 
-    @NoLog(fieldNames = "pass")
+    @DoLog(excludeFields = "pass")
     @NoLogin
     @NoAuth
     @Operation(summary = "邮箱密码登录")

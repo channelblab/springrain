@@ -1,5 +1,6 @@
 package com.channelblab.springrain.common.aop;
 
+import com.channelblab.springrain.common.anotations.DoLog;
 import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.disruptor.MessageEvent;
 import com.channelblab.springrain.common.disruptor.MessageEventType;
@@ -59,12 +60,12 @@ public class LogAspect {
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         List<String> skipFields = new ArrayList<>();
         if (AnnotationUtil.containAnnotation(joinPoint, NoLog.class)) {
-            //放在类上的都不用管
-            NoLog nolog = (NoLog) AnnotationUtil.getAnnotation(joinPoint, NoLog.class);
-            if (nolog.fieldNames().length == 0) {
-                return joinPoint.proceed();
-            } else {
-                skipFields = Arrays.stream(nolog.fieldNames()).collect(Collectors.toList());
+            return joinPoint.proceed();
+        }
+        if (AnnotationUtil.containAnnotation(joinPoint, DoLog.class)) {
+            DoLog doLog = (DoLog) AnnotationUtil.getAnnotation(joinPoint, DoLog.class);
+            if (doLog.excludeFields().length != 0) {
+                skipFields = Arrays.stream(doLog.excludeFields()).collect(Collectors.toList());
             }
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
