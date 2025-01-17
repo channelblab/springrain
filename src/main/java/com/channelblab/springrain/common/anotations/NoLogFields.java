@@ -6,6 +6,6 @@ import java.lang.annotation.*;
 @Inherited
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DoLog {
+public @interface NoLogFields {
     String[] excludeFields() default {};
 }
