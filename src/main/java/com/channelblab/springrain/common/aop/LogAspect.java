@@ -1,7 +1,6 @@
 package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.anotations.NoLog;
-import com.channelblab.springrain.common.anotations.NoLogFields;
 import com.channelblab.springrain.common.disruptor.MessageEvent;
 import com.channelblab.springrain.common.disruptor.MessageEventType;
 import com.channelblab.springrain.common.enums.RequestStatus;
@@ -60,12 +59,11 @@ public class LogAspect {
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         List<String> skipFields = new ArrayList<>();
         if (AnnotationUtil.containAnnotation(joinPoint, NoLog.class)) {
-            return joinPoint.proceed();
-        }
-        if (AnnotationUtil.containAnnotation(joinPoint, NoLogFields.class)) {
-            NoLogFields noLogFields = (NoLogFields) AnnotationUtil.getAnnotation(joinPoint, NoLogFields.class);
-            if (noLogFields.fields().length != 0) {
-                skipFields = Arrays.stream(noLogFields.fields()).collect(Collectors.toList());
+            NoLog noLog = (NoLog) AnnotationUtil.getAnnotation(joinPoint, NoLog.class);
+            if (noLog.fields().length == 0) {
+                return joinPoint.proceed();
+            } else {
+                skipFields = Arrays.stream(noLog.fields()).collect(Collectors.toList());
             }
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
