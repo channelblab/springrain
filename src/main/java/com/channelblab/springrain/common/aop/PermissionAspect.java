@@ -48,6 +48,10 @@ public class PermissionAspect {
         if (UserHolder.getUser() == null) {
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
+        //administrator special logic
+        if (UserHolder.getUser().getId().equals("1")) {
+            return;
+        }
         List<Permission> permissions = permissionService.selectAllPermission(UserHolder.getUser().getId());
         if (!passValidation(requestURI, permissions)) {
             throw new BusinessException(Response.NO_PERMISSION, "no_permission_msg");
