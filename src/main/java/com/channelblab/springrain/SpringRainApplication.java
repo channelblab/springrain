@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.metrics.ApplicationStartup;
 
 import java.util.List;
 
@@ -31,7 +32,13 @@ public class SpringRainApplication {
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
         List<Multilingual> multilingualList = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class));
-        MultilingualUtil.updateData(multilingualList);
+        MultilingualUtil.update(multilingualList);
+    }
+
+    @EventListener(ApplicationStartup.class)
+    public void shutdownBanner(){
+        System.setProperty("mybatis-plus.global-config.banner","false");
+
     }
 
 

@@ -4,12 +4,12 @@ import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @RestControllerAdvice
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @Override
@@ -34,7 +36,6 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
             ServerHttpResponse response) {
         String path = request.getURI().getPath();
         // 排除 Swagger 的接口路径
-        AntPathMatcher matcher = new AntPathMatcher();
 
         if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
             return body;
@@ -45,7 +46,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
             return body;
         } else if (body instanceof String) {
             //特殊处理string返回类型
-            Response responseString = new Response() {
+            Response stringResponse = new Response() {
                 @Override
                 public Boolean getStatus() {
                     return true;
@@ -58,7 +59,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    return MultilingualUtil.getValue("success_code_msg");
+                    return MultilingualUtil.get("success_code_msg");
                 }
 
                 @Override
@@ -66,9 +67,8 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
                     return body;
                 }
             };
-            ObjectMapper objectMapper = new ObjectMapper();
             try {
-                return objectMapper.writeValueAsString(responseString);
+                return objectMapper.writeValueAsString(stringResponse);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -86,7 +86,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    return MultilingualUtil.getValue("success_code_msg");
+                    return MultilingualUtil.get("success_code_msg");
                 }
 
                 @Override

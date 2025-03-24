@@ -86,7 +86,7 @@ public class MultilingualService {
             }
             //update cache
             List<Multilingual> multilingualList = multilingualDao.selectList(null);
-            MultilingualUtil.updateData(multilingualList);
+            MultilingualUtil.update(multilingualList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

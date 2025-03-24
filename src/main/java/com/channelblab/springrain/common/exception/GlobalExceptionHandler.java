@@ -3,8 +3,7 @@ package com.channelblab.springrain.common.exception;
 
 import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -22,14 +21,14 @@ import java.util.stream.Collectors;
  *
  * @author dengy
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 
     @ExceptionHandler(Exception.class)
     public Response unHandleException(Exception e) {
-        LOGGER.error("系统异常，信息为:", e);
+        log.error("系统异常，信息为:", e);
         return new Response() {
             @Override
             public Boolean getStatus() {
@@ -43,7 +42,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return MultilingualUtil.getValue("common_error_code_msg");
+                return MultilingualUtil.get("common_error_code_msg");
             }
 
             @Override
@@ -61,7 +60,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public Response businessException(BusinessException be) {
-        LOGGER.error("业务异常，异常信息为：{}", be.getMessage());
+        log.error("业务异常，异常信息为：{}", be.getMessage());
         return new Response() {
             @Override
             public Boolean getStatus() {
@@ -75,7 +74,8 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return MultilingualUtil.getValue(be.getMessage());
+//                return MultilingualUtil.get(be.getMessage());
+                return be.getMessage();
             }
 
             @Override
@@ -93,14 +93,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, ConstraintViolationException.class})
     public Response parametersException(Exception me) {
-        LOGGER.error("请求参数异常，信息为:{}", me.getMessage());
+        log.error("请求参数异常，信息为:{}", me.getMessage());
         Map<String, String> errors = new HashMap<>();
         if (me instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) me;
+            Map<String, String> finalErrors = errors;
             ex.getBindingResult().getAllErrors().forEach(error -> {
                 String fieldName = ((FieldError) error).getField();
                 String errorMessage = error.getDefaultMessage();
-                errors.put(fieldName, errorMessage);
+                finalErrors.put(fieldName, errorMessage);
             });
         }
 
@@ -116,6 +117,7 @@ public class GlobalExceptionHandler {
         }
 
 
+        Map<String, String> finalErrors1 = errors;
         return new Response() {
             @Override
             public Boolean getStatus() {
@@ -129,12 +131,12 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return MultilingualUtil.getValue("common_error_code_msg");
+                return MultilingualUtil.get("common_error_code_msg");
             }
 
             @Override
             public Object getData() {
-                return errors.toString();
+                return finalErrors1.toString();
             }
         };
     }
@@ -160,7 +162,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-                return MultilingualUtil.getValue("common_error_code_msg");
+                return MultilingualUtil.get("common_error_code_msg");
             }
 
             @Override

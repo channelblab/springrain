@@ -1,6 +1,7 @@
 package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.anotations.NoAuth;
+import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.response.Response;
@@ -11,7 +12,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -29,17 +29,18 @@ import java.util.stream.Collectors;
  * @description：
  * @modified By：
  */
-@Order(3)
+@Order(4)
 @Aspect
 @Component
-@ConditionalOnProperty(name = "aop.apipermission", matchIfMissing = true)
+//@ConditionalOnProperty(name = "aop.apipermission", matchIfMissing = true)
 public class PermissionAspect {
     @Autowired
     private PermissionService permissionService;
 
     @Before("execution(* *..controller.*..*(..))")
     public void doPermission(JoinPoint joinPoint) throws Throwable {
-        if (AnnotationUtil.containAnnotation(joinPoint, NoAuth.class)) {
+        //只使用无需登录，也需要排除掉
+        if (AnnotationUtil.containAnnotation(joinPoint, NoAuth.class) || AnnotationUtil.containAnnotation(joinPoint, NoLogin.class)) {
             return;
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

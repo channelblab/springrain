@@ -18,9 +18,6 @@ public class LangHolder {
         LOCAL.set(lang);
     }
 
-    /**
-     * 清空
-     */
     public static void remove() {
         LOCAL.remove();
     }

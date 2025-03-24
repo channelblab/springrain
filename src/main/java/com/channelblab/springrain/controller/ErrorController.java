@@ -1,5 +1,6 @@
 package com.channelblab.springrain.controller;
 
+import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.response.Response;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/error")
-public class ErrorController {
+public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
+    @NoLogin
     @Hidden
     @GetMapping
     public void error() {

@@ -18,7 +18,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -44,22 +43,22 @@ import java.util.stream.Collectors;
  * @description：
  * @modified By：
  */
-@Order(4)
+@Order(1)
 @Aspect
 @Component
-@ConditionalOnProperty(name = "aop.log", matchIfMissing = true)
+//@ConditionalOnProperty(name = "aop.log", matchIfMissing = true)
 public class LogAspect {
     @Autowired
-    private ObjectMapper om;
+    private ObjectMapper objectMapper;
     @Autowired
     private MessageEventProducer messageEventProducer;
-    private static final int MAX_LENGTH_THRESHOLD = 1000;
 
     @Around("execution(* *..controller.*..*(..))")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable {
         List<String> skipFields = new ArrayList<>();
         if (AnnotationUtil.containAnnotation(joinPoint, NoLog.class)) {
             NoLog noLog = (NoLog) AnnotationUtil.getAnnotation(joinPoint, NoLog.class);
+            // if use nolog and did not use fields
             if (noLog.fields().length == 0) {
                 return joinPoint.proceed();
             } else {
@@ -88,7 +87,7 @@ public class LogAspect {
                 Map<String, String> parameters = getParameters(request, skipFields);
                 if (parameters.keySet().size() != 0) {
                     //todo 不能序列化的东西不处理
-                    requestDataString = om.writeValueAsString(parameters);
+                    requestDataString = objectMapper.writeValueAsString(parameters);
                 }
             } else if (method.equals("POST") || method.equals("PUT")) {
                 requestDataString = getRequestBody(joinPoint, skipFields);
@@ -96,8 +95,8 @@ public class LogAspect {
 
             long costTime = endTimeMillis - startTimeMillis;
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS)
-                    .response(res != null ? om.writeValueAsString(res) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request)).userId(user == null ? null : user.getId())
-                    .build();
+                    .response(res != null ? objectMapper.writeValueAsString(res) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
+                    .userId(user == null ? null : user.getId()).build();
             MessageEvent event = new MessageEvent();
             event.setMessageEventType(MessageEventType.LOG);
             event.setData(newLog);
@@ -111,14 +110,14 @@ public class LogAspect {
                 Map<String, String> parameters = getParameters(request, skipFields);
                 if (parameters.keySet().size() != 0) {
                     //todo 不能序列化的东西不处理
-                    requestDataString = om.writeValueAsString(parameters);
+                    requestDataString = objectMapper.writeValueAsString(parameters);
                 }
             } else if (method.equals("POST") || method.equals("PUT")) {
                 requestDataString = getRequestBody(joinPoint, skipFields);
             }
             long costTime = endTimeMillis - startTimeMillis;
             Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.FAIL)
-                    .response(res != null ? om.writeValueAsString(throwable.getMessage()) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
+                    .response(res != null ? objectMapper.writeValueAsString(throwable.getMessage()) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
                     .userId(user == null ? null : user.getId()).build();
 
             MessageEvent event = new MessageEvent();

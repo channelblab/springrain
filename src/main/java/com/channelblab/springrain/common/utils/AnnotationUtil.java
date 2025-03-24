@@ -24,7 +24,10 @@ public class AnnotationUtil {
         }
         // 获取方法上的注解
         Annotation[] methodAnnotations = method.getAnnotations();
-        return Arrays.stream(methodAnnotations).anyMatch(annotation -> annotation.annotationType().equals(clazz));
+        return Arrays.stream(methodAnnotations).anyMatch(annotation -> {
+            System.out.println(annotation.annotationType() + "===" + clazz + "---" + annotation.annotationType().equals(clazz));
+            return annotation.annotationType().equals(clazz);
+        });
     }
 
     public static Object getAnnotation(JoinPoint joinPoint, Class clazz) throws NoSuchMethodException {

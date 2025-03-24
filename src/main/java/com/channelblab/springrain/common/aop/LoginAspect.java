@@ -11,6 +11,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -25,10 +26,12 @@ import javax.servlet.http.HttpServletRequest;
  * @description：
  * @modified By：
  */
-@Order(2)
+@Order(1)
 @Aspect
 @Component
 public class LoginAspect {
+    @Autowired
+    private HttpServletRequest request;
 
     @Before("execution(* *..controller.*..*(..))")
     public void doValidate(JoinPoint joinPoint) throws NoSuchMethodException {

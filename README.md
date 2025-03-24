@@ -1,5 +1,5 @@
 <div style="text-align: center;">
-# SpringRain
+<span style="font-size: 30px;font-weight: bold">SpringRain 春雨</span>
 
 ![Static Badge](https://img.shields.io/badge/Version_1.0.0)
 ![Static Badge](https://img.shields.io/badge/Version-2-4)
@@ -10,13 +10,21 @@
 
 ## 为什么SpringRain
 
-springrain 本质上是一些公共代码的合集，它不是框架也不是什么创新，它只是将一些公用代码集合在一起。目的是，加快业务系统的开发，
-## 亮点
+SpringRain 本质上是一些公共代码的合集，它不是框架也不是什么创新，它只是将一些常用公用代码集合在一起。目的是，加快业务系统的开发。
+要使用它，你需要完全遵守它的核心开发准则，那就是如无必要勿增实体。
 
+## 亮点
 - 原生多语言支持
+
 - 极简代码
+
+抛弃掉自以为是的各种封装，简洁明了。
+
 - 快速使用
 - 灵活扩展
+
+## 如何使用？
+springrain后端集合体，在使用时方式简便。
 
 ## 设计根据
 
@@ -28,6 +36,18 @@ springrain 本质上是一些公共代码的合集，它不是框架也不是什
 + 现如今多端开发，一些开发方式不支持cookie等传输方式(如微信小程序)，为了多端通用将数据放在请求头中较为合适
 
 什么样的数据应该放在请求头中？
+
+## 特性
+
+### 原生多语言支持
+
+项目原生支持多语言，在需要使用多语言的地方请直接使用工具类获取，在系统层面多语言已默认实现。
+
+```java
+
+String value=MultilingualUtil.get(key);
+
+```
 
 ## 系统功能
 
@@ -77,19 +97,20 @@ springrain 本质上是一些公共代码的合集，它不是框架也不是什
 
 
     ```xml
-
-
         <dependency>
             <groupId>com.channelblab</groupId>
             <artifactId>springrain</artifactId>
             <version>1.0.0</version>
         </dependency>
-
     ```
 
   - 初始化配置
   - 启动项目，基础功能嵌入成功
   - 开发业务逻辑
+
++ 后端项目目录结构
+
+为了能让整个项目能正常运行，框架默认的接口需要放置于controller包下，因为框架会扫描controller包，并未其提供权限及日志
 
 
 ## 框架默认开启功能
