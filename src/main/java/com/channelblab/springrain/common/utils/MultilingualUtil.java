@@ -5,6 +5,7 @@ import com.channelblab.springrain.model.Multilingual;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -30,29 +31,24 @@ public class MultilingualUtil {
      * @return 对应的多语言值或标识
      */
     public static String get(String symbol) {
+        //未传入key，直接返回
         if (ObjectUtils.isEmpty(symbol)) {
             return null;
         }
         String targetLang = LangHolder.getLang();
         List<Multilingual> multilingualList = cache.getIfPresent(targetLang);
-
-        if (multilingualList == null || multilingualList.isEmpty()) {
+        if (CollectionUtils.isEmpty(multilingualList)) {
             log.warn("多语言数据未初始化或未配置，语言为:{},多语言key为:{}", targetLang, symbol);
             return symbol;
         }
-
         //可读性最好
         for (Multilingual multilingual : multilingualList) {
             if (multilingual.getSymbol().equals(symbol)) {
                 return multilingual.getSymbolValue();
             }
         }
-
-        //可读性不好
-        return multilingualList.stream().filter(m -> m.getSymbol().equals(symbol)).map(Multilingual::getSymbolValue).findFirst().orElseGet(() -> {
-            log.warn("未配置对应的多语言，语言为:{},多语言key为:{}", targetLang, symbol);
-            return symbol;
-        });
+        log.warn("未配置对应的多语言，语言为:{},多语言key为:{}", targetLang, symbol);
+        return symbol;
     }
 
     /**
