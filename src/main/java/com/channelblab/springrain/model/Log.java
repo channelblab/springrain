@@ -3,14 +3,9 @@ package com.channelblab.springrain.model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.channelblab.springrain.common.enums.RequestStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.channelblab.springrain.common.holder.UserHolder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -19,14 +14,9 @@ import java.time.LocalDateTime;
  * @modified By：
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema
 @TableName("system_log")
-public class Log {
-    private String id;
-    private String userId;
+public class Log extends BaseModel {
     private String sourceIp;
     private String requestUri;
     private String name;
@@ -34,9 +24,19 @@ public class Log {
     private String request;
     private String response;
     private Long costTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
-
     @TableField(exist = false)
     private User user;
+
+    public Log(String sourceIp, String requestUri, String name, RequestStatus status, String request, String response, Long costTime) {
+        this.sourceIp = sourceIp;
+        this.requestUri = requestUri;
+        this.name = name;
+        this.status = status;
+        this.request = request;
+        this.response = response;
+        this.costTime = costTime;
+        User user1 = UserHolder.getUser();
+        String s = UserHolder.getUser() != null ? UserHolder.getUser().getId() : null;
+        this.setCreateUserId(UserHolder.getUser() != null ? UserHolder.getUser().getId() : null);
+    }
 }

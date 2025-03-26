@@ -8,8 +8,8 @@ import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.IpUtil;
 import com.channelblab.springrain.common.utils.MessageEventProducer;
+import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.model.Log;
-import com.channelblab.springrain.model.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,7 +57,7 @@ public class LogAspect {
         List<String> skipFields = new ArrayList<>();
         if (AnnotationUtil.containAnnotation(joinPoint, NoLog.class)) {
             NoLog noLog = (NoLog) AnnotationUtil.getAnnotation(joinPoint, NoLog.class);
-            // if use nolog and did not use fields
+            // if use @NoLog and did not use fields
             if (noLog.fields().length == 0) {
                 return joinPoint.proceed();
             } else {
@@ -77,7 +76,6 @@ public class LogAspect {
         if (annotation != null) {
             apiName = annotation.summary();
         }
-        User user = UserHolder.getUser();
         try {
             res = joinPoint.proceed();
             endTimeMillis = System.currentTimeMillis();
@@ -94,13 +92,13 @@ public class LogAspect {
             }
 
             long costTime = endTimeMillis - startTimeMillis;
-            Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.SUCCESS)
-                    .response(res != null ? objectMapper.writeValueAsString(res) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
-                    .userId(user == null ? null : user.getId()).build();
+            Log log = new Log(IpUtil.remoteIP(request), request.getRequestURI(), apiName, RequestStatus.SUCCESS, requestDataString, res != null ? objectMapper.writeValueAsString(res) : null,
+                    costTime);
             MessageEvent event = new MessageEvent();
             event.setMessageEventType(MessageEventType.LOG);
-            event.setData(newLog);
+            event.setData(log);
             messageEventProducer.produce(event);
+            UserHolder.remove();
 
         } catch (Throwable throwable) {
             endTimeMillis = System.currentTimeMillis();
@@ -116,14 +114,12 @@ public class LogAspect {
                 requestDataString = getRequestBody(joinPoint, skipFields);
             }
             long costTime = endTimeMillis - startTimeMillis;
-            Log newLog = Log.builder().createTime(LocalDateTime.now()).costTime(costTime).requestUri(request.getRequestURI()).status(RequestStatus.FAIL)
-                    .response(res != null ? objectMapper.writeValueAsString(throwable.getMessage()) : null).request(requestDataString).name(apiName).sourceIp(IpUtil.remoteIP(request))
-                    .userId(user == null ? null : user.getId()).build();
-
+            Log log = new Log(IpUtil.remoteIP(request), request.getRequestURI(), apiName, RequestStatus.FAIL, requestDataString, MultilingualUtil.get(throwable.getMessage()), costTime);
             MessageEvent event = new MessageEvent();
             event.setMessageEventType(MessageEventType.LOG);
-            event.setData(newLog);
+            event.setData(log);
             messageEventProducer.produce(event);
+            UserHolder.remove();
             throw throwable;
         }
         return res;

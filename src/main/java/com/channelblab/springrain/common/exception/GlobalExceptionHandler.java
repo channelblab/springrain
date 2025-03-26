@@ -74,8 +74,7 @@ public class GlobalExceptionHandler {
 
             @Override
             public String getMessage() {
-//                return MultilingualUtil.get(be.getMessage());
-                return be.getMessage();
+                return MultilingualUtil.get(be.getMessage());
             }
 
             @Override
@@ -107,13 +106,8 @@ public class GlobalExceptionHandler {
 
         if (me instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) me;
-            errors = ex.getBindingResult().getAllErrors().stream()
-                    .filter(error -> error instanceof FieldError)
-                    .map(error -> (FieldError) error)
-                    .collect(Collectors.toMap(
-                            FieldError::getField,
-                            FieldError::getDefaultMessage
-                    ));
+            errors = ex.getBindingResult().getAllErrors().stream().filter(error -> error instanceof FieldError).map(error -> (FieldError) error)
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
         }
 
 

@@ -2,6 +2,7 @@ package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +13,10 @@ import java.time.LocalDateTime;
  * @modified By：
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @TableName("system_ip_block")
-public class IpBlock {
-    private String id;
+public class IpBlock extends BaseModel {
     private String ip;
-    private LocalDateTime blockTime;
+    private LocalDateTime blockDateTime;
 
 }

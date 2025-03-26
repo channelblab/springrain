@@ -33,17 +33,17 @@ public class LogService {
 
     public IPage<Log> page(String userId, Integer page, Integer size, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         IPage<Log> pageParam = new Page<>(page, size);
-        LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class).eq(!ObjectUtils.isEmpty(userId), Log::getUserId, userId).ge(startDateTime != null, Log::getCreateTime, startDateTime)
-                .le(endDateTime != null, Log::getCreateTime, endDateTime).orderByDesc(Log::getCreateTime);
+        LambdaQueryWrapper<Log> qr = Wrappers.lambdaQuery(Log.class).eq(!ObjectUtils.isEmpty(userId), Log::getCreateUserId, userId).ge(startDateTime != null, Log::getCreateDateTime, startDateTime)
+                .le(endDateTime != null, Log::getCreateDateTime, endDateTime).orderByDesc(Log::getCreateDateTime);
         IPage<Log> logIPage = logDao.selectPage(pageParam, qr);
         List<Log> records = logIPage.getRecords();
         //why I do this? because I dont want to write SQL and I want to improve the performance
         if (!CollectionUtils.isEmpty(records)) {
-            List<String> userIdList = records.stream().filter(k -> !ObjectUtils.isEmpty(k.getUserId())).map(Log::getUserId).collect(Collectors.toList());
+            List<String> userIdList = records.stream().filter(k -> !ObjectUtils.isEmpty(k.getCreateUserId())).map(Log::getCreateUserId).collect(Collectors.toList());
             // here is the key to improve the performance,select all users use one SQL
             List<User> users = userDao.selectList(Wrappers.lambdaQuery(User.class).in(User::getId, userIdList));
             records.forEach(record -> users.forEach(user -> {
-                if (user.getId().equals(record.getUserId())) {
+                if (user.getId().equals(record.getCreateUserId())) {
                     user.setPass(null);
                     record.setUser(user);
                 }

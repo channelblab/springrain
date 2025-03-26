@@ -8,10 +8,8 @@ import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.UserUtil;
 import com.channelblab.springrain.model.User;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -30,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class LoginAspect {
-    @Autowired
-    private HttpServletRequest request;
 
     @Before("execution(* *..controller.*..*(..))")
     public void doValidate(JoinPoint joinPoint) throws NoSuchMethodException {
@@ -48,9 +44,10 @@ public class LoginAspect {
         UserHolder.setUser(user);
     }
 
-    @After("execution(* *..controller.*..*(..))")
-    public void clearUserHolder() {
-        UserHolder.remove();
-    }
+    //不能在controller之后清理，因为做了统一日志，日志切面会在controller之后获取，清理之后就获取不到了
+//    @After("execution(* *..controller.*..*(..))")
+//    public void clearUserHolder() {
+//        UserHolder.remove();
+//    }
 
 }
