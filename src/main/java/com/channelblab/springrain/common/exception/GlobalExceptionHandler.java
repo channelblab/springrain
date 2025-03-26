@@ -1,9 +1,13 @@
 package com.channelblab.springrain.common.exception;
 
 
+import com.channelblab.springrain.common.holder.LangHolder;
 import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,7 +18,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 全局异常处理器
@@ -24,6 +27,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @ExceptionHandler(Exception.class)
@@ -92,6 +97,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, ConstraintViolationException.class})
     public Response parametersException(Exception me) {
+        // @Validated  执行顺序在自定义AOP之前，因此，在这里设置一下语言
+        LangHolder.setLang("zh-CN");
         log.error("请求参数异常，信息为:{}", me.getMessage());
         Map<String, String> errors = new HashMap<>();
         if (me instanceof MethodArgumentNotValidException) {
@@ -103,15 +110,6 @@ public class GlobalExceptionHandler {
                 finalErrors.put(fieldName, errorMessage);
             });
         }
-
-        if (me instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException ex = (MethodArgumentNotValidException) me;
-            errors = ex.getBindingResult().getAllErrors().stream().filter(error -> error instanceof FieldError).map(error -> (FieldError) error)
-                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-        }
-
-
-        Map<String, String> finalErrors1 = errors;
         return new Response() {
             @Override
             public Boolean getStatus() {
@@ -130,7 +128,11 @@ public class GlobalExceptionHandler {
 
             @Override
             public Object getData() {
-                return finalErrors1.toString();
+                try {
+                    return objectMapper.writeValueAsString(errors);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
     }

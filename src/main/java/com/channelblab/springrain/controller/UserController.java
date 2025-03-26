@@ -6,10 +6,12 @@ import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoLogin;
 import com.channelblab.springrain.model.User;
 import com.channelblab.springrain.model.UserInfoExt;
+import com.channelblab.springrain.model.vo.LoginByEmail;
 import com.channelblab.springrain.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -51,13 +53,13 @@ public class UserController {
     }
 
 
-    @NoLog(fields = "pass")
+    @NoLog(fields = "password")
     @NoLogin
     @NoAuth
     @Operation(summary = "邮箱密码登录")
     @PostMapping("/loginByEmail")
-    public String loginByEmail(@RequestBody User user) {
-        return userService.loginByEmail(user);
+    public String loginByEmail(@RequestBody @Validated LoginByEmail loginByEmail) {
+        return userService.loginByEmail(loginByEmail);
     }
 
     @Operation(summary = "当前在线人员")

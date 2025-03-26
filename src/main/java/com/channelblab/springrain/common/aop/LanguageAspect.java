@@ -3,7 +3,6 @@ package com.channelblab.springrain.common.aop;
 import com.channelblab.springrain.common.holder.LangHolder;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
  * @description：
  * @modified By：
  */
-@Order(1)
 @Aspect
 @Component
 public class LanguageAspect {

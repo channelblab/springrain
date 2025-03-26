@@ -15,6 +15,7 @@ import com.channelblab.springrain.model.Role;
 import com.channelblab.springrain.model.User;
 import com.channelblab.springrain.model.UserInfoExt;
 import com.channelblab.springrain.model.UserRole;
+import com.channelblab.springrain.model.vo.LoginByEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,12 +41,12 @@ public class UserService {
     private UserRoleDao userRoleDao;
 
 
-    public String loginByEmail(User user) {
-        User userExist = userDao.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getEmail, user.getEmail()).eq(User::getEnable, true));
+    public String loginByEmail(LoginByEmail loginByEmail) {
+        User userExist = userDao.selectOne(Wrappers.lambdaQuery(User.class).eq(User::getEmail, loginByEmail.getEmail()).eq(User::getEnable, true));
         if (userExist == null) {
             throw new BusinessException(Response.USERNAME_PASSWORD_ERROR_CODE, "username_password_error_code_msg");
         }
-        if (PasswordUtil.match(user.getPass(), userExist.getPass())) {
+        if (PasswordUtil.match(loginByEmail.getPassword(), userExist.getPass())) {
             return UserUtil.genToken(userExist);
         } else {
             throw new BusinessException(Response.USERNAME_PASSWORD_ERROR_CODE, "username_password_error_code_msg");
