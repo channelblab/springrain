@@ -67,7 +67,7 @@ public class LogAspect {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
 
-        Object res = null;
+        Object res;
         long startTimeMillis = System.currentTimeMillis();
         long endTimeMillis;
 
