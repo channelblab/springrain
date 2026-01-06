@@ -36,8 +36,8 @@ public class SpringRainApplication {
     }
 
     @EventListener(ApplicationStartup.class)
-    public void shutdownBanner(){
-        System.setProperty("mybatis-plus.global-config.banner","false");
+    public void shutdownBanner() {
+        System.setProperty("mybatis-plus.global-config.banner", "false");
 
     }
 

@@ -1,5 +1,6 @@
 package com.channelblab.springrain.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @description：
  * @modified By：
  */
+@ConditionalOnMissingBean(FileService.class)
 public class FileServiceLocal extends FileService {
     @Override
     public String[] upload(MultipartFile[] files) {
