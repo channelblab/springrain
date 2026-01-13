@@ -37,8 +37,6 @@ public class IpBlock {
 
     @Before("execution(* *..controller.*..*(..))")
     public void doLimit(JoinPoint joinPoint) {
-
-
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String requestURI = request.getRequestURI();

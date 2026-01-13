@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,14 +35,13 @@ public class MultilingualController {
     @Autowired
     private MultilingualService multilingualService;
 
-
     @NoLogin
     @NoLog
     @NoAuth
-    @Operation(summary = "前端多语言列表")
-    @GetMapping("/frontedMultilingual")
-    public Map<String, List<Multilingual>> frontedMultilingual() {
-        return multilingualService.frontedMultilingual();
+    @Operation(summary = "多语言数据列表")
+    @GetMapping
+    public Map<String, Object> multilingual() {
+        return multilingualService.multilingual();
     }
 
     @NoLog
@@ -62,8 +60,6 @@ public class MultilingualController {
         try (Workbook workbook = ExcelUtil.exportMultilingualExcel(dataForExport)) {
             workbook.write(response.getOutputStream());
         }
-
-
     }
 
     @NoLog
@@ -73,22 +69,6 @@ public class MultilingualController {
         multilingualService.importExcel(file);
     }
 
-
-    @NoLog
-    @Operation(summary = "查询所有多语言数据")
-    @GetMapping
-    public List<Map<String, Object>> allLang(String symbol, String symbolDescribe) {
-        return multilingualService.allLang(symbol, symbolDescribe);
-    }
-
-    @NoLogin
-    @NoAuth
-    @NoLog
-    @Operation(summary = "语言列表")
-    @GetMapping("/langList")
-    public List<Multilingual> langList() {
-        return multilingualService.langList();
-    }
 
     @Operation(summary = "新增或修改多语言-停止使用")
     @PostMapping("/addOrUpdate")

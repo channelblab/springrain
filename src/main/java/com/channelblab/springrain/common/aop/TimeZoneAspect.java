@@ -27,15 +27,10 @@ public class TimeZoneAspect {
     public Object doLogic(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        String timeZoneHeader = request.getHeader("Time-Zone");
+        String timeZoneHeader = request.getHeader("H-Time-Zone");
         ZoneIdHolder.setZone(timeZoneHeader);
-        try {
-            //process real logic
-            return proceedingJoinPoint.proceed();
-        } catch (Throwable e) {
-            throw e;
-        } finally {
-            ZoneIdHolder.clear();
-        }
+        Object proceed = proceedingJoinPoint.proceed();
+        ZoneIdHolder.clear();
+        return proceed;
     }
 }

@@ -1,16 +1,14 @@
 package com.channelblab.springrain.common.utils;
 
+import com.channelblab.springrain.common.enums.CachePrefix;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.model.User;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 /**
@@ -21,22 +19,28 @@ import java.util.UUID;
  */
 @Slf4j
 public class UserUtil {
-    //过期时间1小时
-    private static final Integer LOGIN_EXPIRE_SECONDS = 60 * 60;
-    static Cache<Object, Object> cache;
+    // cache
+    private static volatile CacheManager cacheManager;
 
-    static {
-        cache = Caffeine.newBuilder().expireAfterAccess(Duration.ofSeconds(LOGIN_EXPIRE_SECONDS)).build();
-    }
-
-    private static Cache<Object, Object> getCaffeine() {
-        return cache;
+    public static void init(CacheManager cm) {
+        if (cacheManager == null) {
+            cacheManager = cm;
+        }
     }
 
     public static String genToken(User user) {
         kickOut(user.getId());
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        getCaffeine().put(uuid, user);
+        List list = cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).get(CachePrefix.LOGIN_USER.getValue(), List.class);
+        HashMap<Object, Object> param = new HashMap<>();
+        param.put("dateTime", LocalDateTime.now());
+        param.put("token", uuid);
+        param.put("user", user);
+        if (list == null) {
+            list = new ArrayList();
+        }
+        list.add(param);
+        cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).put(CachePrefix.LOGIN_USER.getValue(), list);
         return uuid;
     }
 
@@ -47,32 +51,40 @@ public class UserUtil {
      * @return
      */
     public static User decToken(String token) {
-        Object ifPresent = getCaffeine().getIfPresent(token);
-        if (ifPresent == null) {
-            //未登录或者登录过期
+        List list = cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).get(CachePrefix.LOGIN_USER.getValue(), List.class);
+        if (list == null) {
+            //虚假token
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
-        return (User) ifPresent;
+        User u = null;
+        for (Object item : list) {
+            Map<String, Object> resMap = (Map<String, Object>) item;
+            if (resMap.get("token").equals(token)) {
+                u = (User) resMap.get("user");
+            }
+        }
+        return u;
     }
 
     public static void kickOut(String userId) {
-        Cache<Object, Object> caffeine = getCaffeine();
-        for (Object key : caffeine.asMap().keySet()) {
-            User u = (User) caffeine.getIfPresent(key);
-            if (u != null && u.getId().equals(userId)) {
-                caffeine.invalidate(key);
-            }
+        List list = cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).get(CachePrefix.LOGIN_USER.getValue(), List.class);
+        if (list == null) {
+            return;
         }
+        list.removeIf(item -> {
+            Map<String, Object> resMap = (Map<String, Object>) item;
+            return ((User) resMap.get("user")).getId().equals(userId);
+        });
+        cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).put(CachePrefix.LOGIN_USER.getValue(), list);
     }
 
     public static List<User> onlineUsers() {
-        List<User> onlineUsers = new ArrayList<>();
-        Cache<Object, Object> caffeine = getCaffeine();
-        for (Object key : caffeine.asMap().keySet()) {
-            User u = (User) caffeine.getIfPresent(key);
-            onlineUsers.add(u);
-        }
-        return onlineUsers;
+        List list = cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).get(CachePrefix.LOGIN_USER.getValue(), List.class);
+        List<User> resList = new ArrayList<>();
+        list.forEach(item -> {
+            resList.add((User) ((Map<String, Object>) item).get("user"));
+        });
+        return resList;
     }
 
 }

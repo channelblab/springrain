@@ -52,7 +52,6 @@ public class UserController {
         return userService.byDepartmentId(departmentId, page, size);
     }
 
-
     @NoLog(fields = "password")
     @NoLogin
     @NoAuth

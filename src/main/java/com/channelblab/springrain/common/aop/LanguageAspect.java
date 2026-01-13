@@ -1,8 +1,10 @@
 package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.holder.LangHolder;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,21 +19,20 @@ import javax.servlet.http.HttpServletRequest;
  * @description：
  * @modified By：
  */
+@Order(1)
 @Aspect
 @Component
 public class LanguageAspect {
 
-    @Before("execution(* *..controller.*..*(..))")
-    public void doInit() {
+    @Around("execution(* *..controller.*..*(..))")
+    public Object doLogic(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        //初始化语言
-        String lang = request.getHeader("Lang");
-        if (ObjectUtils.isEmpty(lang)) {
-            LangHolder.setLang("zh-CN");
-        } else {
-            LangHolder.setLang(lang);
-        }
+        String lang = request.getHeader("H-LANG");
+        LangHolder.setLang(ObjectUtils.isEmpty(lang) ? "zh-CN" : lang);
+        Object proceed = joinPoint.proceed();
+        LangHolder.remove();
+        return proceed;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.channelblab.springrain.model;
 
 import com.channelblab.springrain.common.holder.UserHolder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,17 +14,20 @@ import java.time.LocalDateTime;
  */
 @Data
 public class BaseModel {
-    //id
+    @Schema(description = "主键ID")
     private String id;
-
-    //创建时间
+    @Schema(description = "创建时间（服务器时区）")
     private LocalDateTime createDateTime = LocalDateTime.now();
-    //更新时间
+    @Schema(description = "更新时间（服务器时区）")
     private LocalDateTime updateDateTime = LocalDateTime.now();
-    //创建人ID
+    @Schema(description = "创建时间（0时区）")
+    private Long globalCreateDateTime = System.currentTimeMillis() / 1000;
+    @Schema(description = "更新时间（0时区）")
+    private Long globalUpdateDateTime = System.currentTimeMillis() / 1000;
+    @Schema(description = "创建人ID")
     private String createUserId = UserHolder.getUser() != null ? UserHolder.getUser().getId() : null;
-    //更新用户ID
+    @Schema(description = "更新人ID")
     private String updateUserId = UserHolder.getUser() != null ? UserHolder.getUser().getId() : null;
-    //删除状态
+    @Schema(description = "删除状态")
     private Boolean deleted = false;
 }

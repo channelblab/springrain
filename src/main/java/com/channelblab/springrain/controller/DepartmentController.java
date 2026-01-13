@@ -5,6 +5,7 @@ import com.channelblab.springrain.service.DepartmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class DepartmentController {
 
     @Operation(summary = "部门树")
     @GetMapping("/tree")
+    @Cacheable(cacheNames = "department",key = "'department'")
     public List<Department> tree() {
         return departmentService.tree();
     }

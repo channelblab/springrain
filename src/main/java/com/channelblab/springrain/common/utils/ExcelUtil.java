@@ -35,7 +35,7 @@ public class ExcelUtil {
                 String symbolDescribe = String.valueOf(sheet.getRow(startRow).getCell(1));
                 String symbolValue = String.valueOf(sheet.getRow(startRow).getCell(startCol));
                 Multilingual multilingual = new Multilingual();
-                multilingual.setLangSymbol(langSymbol);
+                multilingual.setLang(langSymbol);
                 multilingual.setLangDescribe(langDescribe);
                 multilingual.setSymbol(symbol);
                 multilingual.setSymbolDescribe(symbolDescribe);

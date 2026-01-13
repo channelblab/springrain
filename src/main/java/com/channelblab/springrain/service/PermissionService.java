@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.channelblab.springrain.dao.PermissionDao;
 import com.channelblab.springrain.model.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -32,9 +33,9 @@ public class PermissionService {
 
     public List<Permission> tree() {
         List<Permission> allPermissions = permissionDao.selectList(null);
-//        for (Permission allPermission : allPermissions) {
-//            allPermission.setName(MultilingualUtil.getValue(allPermission.getName()));
-//        }
+        //        for (Permission allPermission : allPermissions) {
+        //            allPermission.setName(MultilingualUtil.getValue(allPermission.getName()));
+        //        }
 
 
         List<Permission> firstPermissions = allPermissions.stream().filter(k -> k.getParentId() == null).collect(Collectors.toList());
@@ -59,6 +60,7 @@ public class PermissionService {
     }
 
     //TODO need to use cache for speed up
+    @Cacheable(key = "T(com.channelblab.springrain.common.enums.CachePrefix).USER_PERMISSION+'::'+#userId")
     public List<Permission> selectAllPermission(String userId) {
         return permissionDao.selectAllPermissionUriByUserId(userId);
     }

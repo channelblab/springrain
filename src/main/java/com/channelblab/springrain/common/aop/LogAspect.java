@@ -18,6 +18,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -42,10 +43,10 @@ import java.util.stream.Collectors;
  * @description：
  * @modified By：
  */
-@Order(1)
+@Order(2)
 @Aspect
 @Component
-//@ConditionalOnProperty(name = "aop.log", matchIfMissing = true)
+@ConditionalOnProperty(name = "aop.log", matchIfMissing = true)
 public class LogAspect {
     @Autowired
     private ObjectMapper objectMapper;

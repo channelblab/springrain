@@ -2,13 +2,18 @@ package com.channelblab.springrain.controller;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.model.SystemLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.IOException;
 
 /**
  * @author     ：dengyi(A.K.A Bear)
@@ -36,6 +41,30 @@ public class SystemLoggerController {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         ch.qos.logback.classic.Logger rootlogger = context.getLogger(LOGGER.ROOT_LOGGER_NAME);
         return rootlogger.getLevel().levelStr;
+    }
+
+    @NoResponseHandle
+    @Operation(summary = "日志实时输出")
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter stream() throws IOException {
+
+
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        context.addListener(new );
+        Logger rootLogger = context.getLogger(Logger.ROOT_LOGGER_NAME);
+//        if (rootLogger.getAppender("IN_MEMORY_APPENDER") == null) {
+//            InMemoryLogAppender appender = new InMemoryLogAppender();
+//            appender.setName("IN_MEMORY_APPENDER");
+//            appender.setContext(context);
+//            appender.start();
+//            rootLogger.addAppender(appender);
+//        }
+
+
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        emitter.send("abc");
+
+        return emitter;
     }
 
 

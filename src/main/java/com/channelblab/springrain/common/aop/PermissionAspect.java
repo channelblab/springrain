@@ -12,6 +12,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,10 +33,11 @@ import java.util.stream.Collectors;
 @Order(4)
 @Aspect
 @Component
-//@ConditionalOnProperty(name = "aop.apipermission", matchIfMissing = true)
+@ConditionalOnProperty(name = "aop.apipermission", matchIfMissing = true)
 public class PermissionAspect {
     @Autowired
     private PermissionService permissionService;
+    //    private List<String> excludePaths;
 
     @Before("execution(* *..controller.*..*(..))")
     public void doPermission(JoinPoint joinPoint) throws Throwable {
@@ -46,10 +48,15 @@ public class PermissionAspect {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String requestURI = request.getRequestURI();
+        // exclude request uri
+        //        if (excludePaths.contains(requestURI)) {
+        //            return;
+        //        }
+        //current login user validate
         if (UserHolder.getUser() == null) {
             throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
         }
-        //administrator special logic
+        //administrator special logic, maybe we can do another logic for special user id
         if (UserHolder.getUser().getId().equals("1")) {
             return;
         }

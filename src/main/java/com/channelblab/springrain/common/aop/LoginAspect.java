@@ -1,15 +1,16 @@
 package com.channelblab.springrain.common.aop;
 
 import com.channelblab.springrain.common.anotations.NoLogin;
+import com.channelblab.springrain.common.enums.HeaderName;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.common.holder.UserHolder;
 import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.common.utils.AnnotationUtil;
 import com.channelblab.springrain.common.utils.UserUtil;
 import com.channelblab.springrain.model.User;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -29,25 +30,21 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class LoginAspect {
 
-    @Before("execution(* *..controller.*..*(..))")
-    public void doValidate(JoinPoint joinPoint) throws NoSuchMethodException {
-        if (AnnotationUtil.containAnnotation(joinPoint, NoLogin.class)) {
-            return;
+    @Around("execution(* *..controller.*..*(..))")
+    public Object doValidate(ProceedingJoinPoint joinPoint) throws Throwable {
+        if (!AnnotationUtil.containAnnotation(joinPoint, NoLogin.class)) {
+            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = requestAttributes.getRequest();
+            String token = request.getHeader(HeaderName.HEADER_TOKEN.getValue());
+            if (ObjectUtils.isEmpty(token)) {
+                throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
+            }
+            User user = UserUtil.decToken(token);
+            UserHolder.setUser(user);
+            Object proceed = joinPoint.proceed();
+            UserHolder.remove();
+            return proceed;
         }
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = requestAttributes.getRequest();
-        String token = request.getHeader("token");
-        if (ObjectUtils.isEmpty(token)) {
-            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
-        }
-        User user = UserUtil.decToken(token);
-        UserHolder.setUser(user);
+        return joinPoint.proceed();
     }
-
-    //不能在controller之后清理，因为做了统一日志，日志切面会在controller之后获取，清理之后就获取不到了
-//    @After("execution(* *..controller.*..*(..))")
-//    public void clearUserHolder() {
-//        UserHolder.remove();
-//    }
-
 }

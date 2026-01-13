@@ -13,12 +13,12 @@ import lombok.Data;
 @Data
 @Schema
 @TableName("system_multilingual")
-public class Multilingual {
-    private String id;
-    private String langSymbol;
+public class Multilingual extends BaseModel {
+    // F frontend, B backend
+    private String type;
+    private String lang;
     private String langDescribe;
     private String symbol;
     private String symbolValue;
-    //关于当前字段的描述
     private String symbolDescribe;
 }

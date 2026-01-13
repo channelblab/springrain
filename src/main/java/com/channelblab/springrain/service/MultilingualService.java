@@ -5,7 +5,9 @@ import com.channelblab.springrain.common.utils.ExcelUtil;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.MultilingualDao;
 import com.channelblab.springrain.model.Multilingual;
+import com.channelblab.springrain.service.cache.MultilingualCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -29,14 +31,18 @@ import java.util.stream.Collectors;
 public class MultilingualService {
     @Autowired
     private MultilingualDao multilingualDao;
+    @Autowired
+    private CacheManager cacheManager;
+    @Autowired
+    private MultilingualCacheService multilingualCacheService;
 
     public List<Map<String, Object>> allLang(String symbol, String symbolDescribe) {
         List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).eq(!ObjectUtils.isEmpty(symbol), Multilingual::getSymbol, symbol)
                 .like(!ObjectUtils.isEmpty(symbolDescribe), Multilingual::getSymbolDescribe, symbolDescribe).orderByAsc(Multilingual::getSymbol));
         List<Map<String, Object>> listRes = new ArrayList<>();
         //zh_CN as the default standard language
-        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh-CN")).collect(Collectors.toList());
-        Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
+        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLang().equals("zh-CN")).collect(Collectors.toList());
+        Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLang));
         standardLang.forEach(standard -> {
             Map<String, Object> mapRes = new HashMap<>();
             mapRes.put("id", standard.getId());
@@ -71,10 +77,6 @@ public class MultilingualService {
         }
     }
 
-    public List<Multilingual> langList() {
-        return multilingualDao.selectList(
-                Wrappers.lambdaQuery(Multilingual.class).select(Multilingual::getLangSymbol, Multilingual::getLangDescribe).groupBy(Multilingual::getLangSymbol, Multilingual::getLangDescribe));
-    }
 
     @Transactional
     public void importExcel(MultipartFile file) {
@@ -98,8 +100,8 @@ public class MultilingualService {
         List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).orderByAsc(Multilingual::getSymbol));
         List<Map<String, Object>> listRes = new ArrayList<>();
         //zh_CN as the default standard language
-        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLangSymbol().equals("zh-CN")).collect(Collectors.toList());
-        Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
+        List<Multilingual> standardLang = multilinguals.stream().filter(item -> item.getLang().equals("zh-CN")).collect(Collectors.toList());
+        Map<String, List<Multilingual>> totalLangData = multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLang));
         standardLang.forEach(standard -> {
             Map<String, Object> mapRes = new HashMap<>();
             mapRes.put("id", standard.getId());
@@ -121,9 +123,22 @@ public class MultilingualService {
         return resData;
     }
 
-    //todo need cache
-    public Map<String, List<Multilingual>> frontedMultilingual() {
-        List<Multilingual> multilinguals = multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class));
-        return multilinguals.stream().collect(Collectors.groupingBy(Multilingual::getLangSymbol));
+    /**
+     * 构造语言类别列表，多语言数据返回前端
+     *
+     * @return
+     */
+    public Map<String, Object> multilingual() {
+        HashMap<String, Object> map = new HashMap<>();
+        //所有分类
+        List<Multilingual> langList = multilingualCacheService.langList();
+        map.put("langList", langList);
+
+        for (Multilingual multilingual : langList) {
+            String langSymbol = multilingual.getLang();
+            map.put(langSymbol, multilingualCacheService.getMultilingualByLocal(langSymbol, "F"));
+        }
+
+        return map;
     }
 }
