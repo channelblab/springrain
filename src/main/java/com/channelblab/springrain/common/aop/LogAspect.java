@@ -115,6 +115,7 @@ public class LogAspect {
                 requestDataString = getRequestBody(joinPoint, skipFields);
             }
             long costTime = endTimeMillis - startTimeMillis;
+            //todo 异常状态下 用户信息为空
             Log log = new Log(IpUtil.remoteIP(request), request.getRequestURI(), apiName, RequestStatus.FAIL, requestDataString, MultilingualUtil.get(throwable.getMessage()), costTime);
             MessageEvent event = new MessageEvent();
             event.setMessageEventType(MessageEventType.LOG);
