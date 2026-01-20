@@ -1,13 +1,19 @@
 package com.channelblab.springrain.common.utils;
 
+import com.channelblab.springrain.common.enums.CachePrefix;
+import com.channelblab.springrain.common.enums.MultilingualType;
 import com.channelblab.springrain.common.holder.LangHolder;
 import com.channelblab.springrain.model.Multilingual;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -35,24 +41,19 @@ public class MultilingualUtil {
      * @return 对应的多语言值或标识
      */
     public static String get(String symbol) {
-        //未传入key，直接返回
-        if (ObjectUtils.isEmpty(symbol)) {
-            return null;
-        }
         String targetLang = LangHolder.getLang();
-        List list = cacheManager.getCache("multilingual").get(symbol, List.class);
-        //        List<Multilingual> multilingualList = cache.getIfPresent(targetLang);
-        //        if (CollectionUtils.isEmpty(multilingualList)) {
-        //            log.warn("多语言数据未初始化或未配置，语言为:{},多语言key为:{}", targetLang, symbol);
-        //            return symbol;
-        //        }
-        //        //可读性最好
-        //        for (Multilingual multilingual : multilingualList) {
-        //            if (multilingual.getSymbol().equals(symbol)) {
-        //                return multilingual.getSymbolValue();
-        //            }
-        //        }
-        log.warn("未配置对应的多语言，语言为:{},多语言key为:{}", targetLang, symbol);
+        if (!ObjectUtils.isEmpty(symbol) && !ObjectUtils.isEmpty(targetLang)) {
+            List list = cacheManager.getCache(CachePrefix.MULTILINGUAL.getValue()).get(targetLang, List.class);
+            if (!CollectionUtils.isEmpty(list)) {
+                for (Object item : list) {
+                    Multilingual multilingual = (Multilingual) item;
+                    if (multilingual.equals(symbol)) {
+                        return multilingual.getSymbolValue();
+                    }
+                }
+            }
+        }
+        log.warn("not config multilingual/未配置多语言信息,lang is/语言为:{},key is/多语言key为:{}", targetLang, symbol);
         return symbol;
     }
 
@@ -62,7 +63,20 @@ public class MultilingualUtil {
      * @param multilingualList 多语言数据列表
      */
     public static void update(List<Multilingual> multilingualList) {
+        Cache cache = cacheManager.getCache(CachePrefix.MULTILINGUAL.getValue());
+
+        ArrayList langList = multilingualList.stream().filter(item -> item.getType().equals(MultilingualType.FRONTEND))
+                .collect(Collectors.collectingAndThen(Collectors.toMap(Multilingual::getLang, Function.identity(), (existing, replacement) -> existing), map -> new ArrayList(map.values())));
+        cache.put("langList", langList);
         Map<String, List<Multilingual>> groupedByLang = multilingualList.stream().collect(Collectors.groupingBy(Multilingual::getLang));
-        // groupedByLang.forEach(cache::put);
+        groupedByLang.forEach((key, value) -> {
+            //frontend
+            List<Multilingual> frontendList = value.stream().filter(item -> item.getType().equals(MultilingualType.FRONTEND)).collect(Collectors.toList());
+            //backend
+            List<Multilingual> backendList = value.stream().filter(item -> item.getType().equals(MultilingualType.BACKEND)).collect(Collectors.toList());
+
+            cache.put(key + "::" + MultilingualType.FRONTEND, frontendList);
+            cache.put(key + "::" + MultilingualType.BACKEND, backendList);
+        });
     }
 }

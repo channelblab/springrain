@@ -2,6 +2,7 @@ package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.channelblab.springrain.common.enums.RoleType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -30,7 +31,8 @@ public class Role {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    private String type;//自定义或者内置
+    //内置不能删除
+    private RoleType type;//自定义或者内置
 
     @NotEmpty
     @TableField(exist = false)

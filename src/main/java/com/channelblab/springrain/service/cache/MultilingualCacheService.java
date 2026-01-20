@@ -22,18 +22,12 @@ public class MultilingualCacheService {
     @Autowired
     private MultilingualDao multilingualDao;
 
-    /**
-     * @param local
-     * @param type
-     * @return
-     */
-    @Cacheable(cacheNames = "multilingual", key = "#local +'::'+ #type")
+    @Cacheable(value = "multilingual", key = "#local +'::'+ #type")
     public List<Multilingual> getMultilingualByLocal(String local, String type) {
         return multilingualDao.selectList(new LambdaQueryWrapper<Multilingual>().eq(Multilingual::getLang, local).eq(!ObjectUtils.isEmpty(type), Multilingual::getType, type));
     }
 
-
-    @Cacheable(cacheNames = "multilingual", key = "'langList'")
+    @Cacheable(value = "multilingual", key = "'langList'")
     public List<Multilingual> langList() {
         return multilingualDao.selectList(Wrappers.lambdaQuery(Multilingual.class).groupBy(Multilingual::getLang, Multilingual::getLangDescribe));
     }

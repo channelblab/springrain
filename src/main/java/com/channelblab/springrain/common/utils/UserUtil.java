@@ -6,6 +6,7 @@ import com.channelblab.springrain.common.response.Response;
 import com.channelblab.springrain.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -51,6 +52,11 @@ public class UserUtil {
      * @return
      */
     public static User decToken(String token) {
+        //blank or null validate
+        if (ObjectUtils.isEmpty(token)) {
+            throw new BusinessException(Response.LOGIN_EXPIRE_CODE, "login_expire");
+        }
+        //todo 可以增加其他方式优先返回
         List list = cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).get(CachePrefix.LOGIN_USER.getValue(), List.class);
         if (list == null) {
             //虚假token
@@ -67,6 +73,10 @@ public class UserUtil {
     }
 
     public static void kickOut(String userId) {
+        if (ObjectUtils.isEmpty(userId)) {
+            return;
+        }
+
         List list = cacheManager.getCache(CachePrefix.LOGIN_USER.getValue()).get(CachePrefix.LOGIN_USER.getValue(), List.class);
         if (list == null) {
             return;

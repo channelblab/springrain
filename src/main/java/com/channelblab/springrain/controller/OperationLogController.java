@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
 import com.channelblab.springrain.model.Log;
-import com.channelblab.springrain.service.LogService;
+import com.channelblab.springrain.service.OperationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,10 @@ import java.time.LocalDateTime;
  */
 @Tag(name = "框架-操作日志接口")
 @RestController
-@RequestMapping("/log")
-public class LogController {
+@RequestMapping("/operationLog")
+public class OperationLogController {
     @Autowired
-    private LogService logService;
+    private OperationLogService operationLogService;
 
     @NoLog
     @Operation(summary = "分页查询")
@@ -37,12 +37,12 @@ public class LogController {
     public IPage<Log> page(@RequestParam(required = false) String userId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDateTime) {
-        return logService.page(userId, page, size, startDateTime, endDateTime);
+        return operationLogService.page(userId, page, size, startDateTime, endDateTime);
     }
 
 
     @NoLog
-    @Operation(summary = "导出操作日志")
+    @Operation(summary = "导出")
     @NoResponseHandle
     @GetMapping("/export")
     public void exportTemplate(HttpServletResponse response, @RequestParam(required = false) String userId,

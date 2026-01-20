@@ -38,7 +38,7 @@ public class MultilingualController {
     @NoLogin
     @NoLog
     @NoAuth
-    @Operation(summary = "多语言数据列表")
+    @Operation(summary = "前端多语言数据列表")
     @GetMapping
     public Map<String, Object> multilingual() {
         return multilingualService.multilingual();
@@ -70,7 +70,7 @@ public class MultilingualController {
     }
 
 
-    @Operation(summary = "新增或修改多语言-停止使用")
+    @Operation(summary = "新增或修改多语言")
     @PostMapping("/addOrUpdate")
     public void addOrUpdate(@RequestBody Multilingual multilingual) {
         multilingualService.addOrUpdate(multilingual);

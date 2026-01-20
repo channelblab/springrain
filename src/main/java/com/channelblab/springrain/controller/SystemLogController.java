@@ -2,7 +2,10 @@ package com.channelblab.springrain.controller;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.channelblab.springrain.common.anotations.NoLog;
 import com.channelblab.springrain.common.anotations.NoResponseHandle;
+import com.channelblab.springrain.common.holder.UserHolder;
+import com.channelblab.springrain.common.utils.SSELogUtil;
 import com.channelblab.springrain.model.SystemLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,11 +24,11 @@ import java.io.IOException;
  * @description：log controller
  * @modified By：
  */
-@Tag(name = "框架-系统日志接口-目前未使用")
+@Tag(name = "框架-系统日志接口")
 @RestController
-@RequestMapping("/systemLogger")
-public class SystemLoggerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SystemLoggerController.class);
+@RequestMapping("/systemLog")
+public class SystemLogController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemLogController.class);
 
     @Operation(summary = "修改系统日志输出级别")
     @PostMapping("/changeLevel")
@@ -43,28 +46,12 @@ public class SystemLoggerController {
         return rootlogger.getLevel().levelStr;
     }
 
+    @NoLog
     @NoResponseHandle
     @Operation(summary = "日志实时输出")
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream() throws IOException {
-
-
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-//        context.addListener(new );
-        Logger rootLogger = context.getLogger(Logger.ROOT_LOGGER_NAME);
-//        if (rootLogger.getAppender("IN_MEMORY_APPENDER") == null) {
-//            InMemoryLogAppender appender = new InMemoryLogAppender();
-//            appender.setName("IN_MEMORY_APPENDER");
-//            appender.setContext(context);
-//            appender.start();
-//            rootLogger.addAppender(appender);
-//        }
-
-
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitter.send("abc");
-
-        return emitter;
+        return SSELogUtil.registerEmitter(UserHolder.getUser().getId());
     }
 
 

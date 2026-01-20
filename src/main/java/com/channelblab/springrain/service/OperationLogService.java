@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @modified By：
  */
 @Service
-public class LogService {
+public class OperationLogService {
     @Autowired
     private LogDao logDao;
     @Autowired

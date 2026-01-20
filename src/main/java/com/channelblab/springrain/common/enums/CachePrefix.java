@@ -7,7 +7,7 @@ package com.channelblab.springrain.common.enums;
  * @modified By：
  */
 public enum CachePrefix {
-    LOGIN_USER("loginUser"), USER_PERMISSION("userPermission");
+    LOGIN_USER("loginUser"), USER_PERMISSION("userPermission"), MULTILINGUAL("multilingual");
     private String value;
 
     CachePrefix(String v) {

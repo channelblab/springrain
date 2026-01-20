@@ -1,6 +1,7 @@
 package com.channelblab.springrain.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.channelblab.springrain.common.enums.MultilingualType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -14,8 +15,8 @@ import lombok.Data;
 @Schema
 @TableName("system_multilingual")
 public class Multilingual extends BaseModel {
-    // F frontend, B backend
-    private String type;
+    // FRONT frontend, BACKEND backend
+    private MultilingualType type;
     private String lang;
     private String langDescribe;
     private String symbol;

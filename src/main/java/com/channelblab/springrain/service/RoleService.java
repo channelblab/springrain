@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.channelblab.springrain.common.enums.RoleType;
 import com.channelblab.springrain.common.exception.BusinessException;
 import com.channelblab.springrain.dao.RoleDao;
 import com.channelblab.springrain.dao.RolePermissionDao;
@@ -38,7 +39,7 @@ public class RoleService {
     public void addOrUpdate(Role role) {
         if (ObjectUtils.isEmpty(role.getId())) {
             //add
-            role.setType("CUSTOM");
+            role.setType(RoleType.CUSTOM);
             role.setCreateTime(new Date());
             role.setUpdateTime(new Date());
             roleDao.insert(role);
@@ -101,7 +102,7 @@ public class RoleService {
         if (role == null) {
             return;
         }
-        if ("SYSTEM".equals(role.getType())) {
+        if (role.getType().equals(RoleType.INNER)) {
             throw new BusinessException("system.role.can.not.delete");
         }
         roleDao.deleteById(id);

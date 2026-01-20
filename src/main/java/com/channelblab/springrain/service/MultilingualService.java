@@ -1,6 +1,7 @@
 package com.channelblab.springrain.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.channelblab.springrain.common.enums.MultilingualType;
 import com.channelblab.springrain.common.utils.ExcelUtil;
 import com.channelblab.springrain.common.utils.MultilingualUtil;
 import com.channelblab.springrain.dao.MultilingualDao;
@@ -75,6 +76,9 @@ public class MultilingualService {
         } else {
             multilingualDao.updateById(multilingual);
         }
+        //更新缓存
+        List<Multilingual> multilingualList = multilingualDao.selectList(null);
+        MultilingualUtil.update(multilingualList);
     }
 
 
@@ -136,7 +140,9 @@ public class MultilingualService {
 
         for (Multilingual multilingual : langList) {
             String langSymbol = multilingual.getLang();
-            map.put(langSymbol, multilingualCacheService.getMultilingualByLocal(langSymbol, "F"));
+            map.put(langSymbol, multilingualCacheService.getMultilingualByLocal(langSymbol, MultilingualType.FRONTEND.name()));
+            //顺便初始化后端
+            multilingualCacheService.getMultilingualByLocal(langSymbol, MultilingualType.BACKEND.name());
         }
 
         return map;
