@@ -59,7 +59,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    return MultilingualUtil.get("success_code_msg");
+                    return MultilingualUtil.get("backend_success_code_msg");
                 }
 
                 @Override
@@ -86,7 +86,7 @@ public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
                 @Override
                 public String getMessage() {
-                    return MultilingualUtil.get("success_code_msg");
+                    return MultilingualUtil.get("backend_success_code_msg");
                 }
 
                 @Override

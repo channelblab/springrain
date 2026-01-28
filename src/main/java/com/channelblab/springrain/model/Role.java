@@ -3,12 +3,11 @@ package com.channelblab.springrain.model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.channelblab.springrain.common.enums.RoleType;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,19 +18,18 @@ import java.util.List;
  */
 @Data
 @TableName("perm_role")
-public class Role {
-    private String id;
+public class Role extends BaseModel {
+
+    @Schema(description = "name")
     @NotBlank
     private String name;
-    private String detail;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    @Schema(description = "角色描述")
+    private String roleDescribe;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
 
     //内置不能删除
+    @Schema(description = "角色类型")
     private RoleType type;//自定义或者内置
 
     @NotEmpty

@@ -24,13 +24,13 @@ import java.io.IOException;
  * @description：log controller
  * @modified By：
  */
-@Tag(name = "框架-系统日志接口")
+@Tag(name = "Framework-System Log/框架-系统日志接口")
 @RestController
 @RequestMapping("/systemLog")
 public class SystemLogController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemLogController.class);
 
-    @Operation(summary = "修改系统日志输出级别")
+    @Operation(summary = "Modify System Log Level/修改系统日志输出级别")
     @PostMapping("/changeLevel")
     public void changeLevel(@RequestBody @Validated SystemLogger systemLogger) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -38,7 +38,7 @@ public class SystemLogController {
         rootlogger.setLevel(Level.toLevel(String.valueOf(systemLogger.getLevel())));
     }
 
-    @Operation(summary = "当前日志输出级别")
+    @Operation(summary = "Query Current Log Level/当前日志输出级别")
     @GetMapping("/currentLevel")
     public String currentLevel() {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -48,7 +48,7 @@ public class SystemLogController {
 
     @NoLog
     @NoResponseHandle
-    @Operation(summary = "日志实时输出")
+    @Operation(summary = "Realtime Log Output/日志实时输出")
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream() throws IOException {
         return SSELogUtil.registerEmitter(UserHolder.getUser().getId());

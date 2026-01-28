@@ -23,7 +23,7 @@ import java.util.List;
  * @description：log controller
  * @modified By：
  */
-@Tag(name = "框架-用户接口")
+@Tag(name = "Framework-User Interface/框架-用户接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -31,7 +31,7 @@ public class UserController {
     private UserService userService;
 
     @NoLog
-    @Operation(summary = "分页查询")
+    @Operation(summary = "Pagination query/分页查询")
     @GetMapping("/page")
     public IPage<User> page(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String searchKey,
             @RequestParam(required = false) String departmentId) {
@@ -39,14 +39,14 @@ public class UserController {
     }
 
     @NoAuth
-    @Operation(summary = "查询个人信息")
+    @Operation(summary = "Query personal Info/查询个人信息")
     @GetMapping("/info")
     public UserInfoExt info() {
         return userService.info();
     }
 
     @NoLog
-    @Operation(summary = "通过部门id查询所有员工")
+    @Operation(summary = "Query User By Department/通过部门id查询所有员工")
     @GetMapping("/byDepartmentId")
     public IPage<User> byDepartmentId(@RequestParam() @NotBlank String departmentId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         return userService.byDepartmentId(departmentId, page, size);
@@ -55,26 +55,26 @@ public class UserController {
     @NoLog(fields = "password")
     @NoLogin
     @NoAuth
-    @Operation(summary = "邮箱密码登录")
+    @Operation(summary = "Login By email and password/邮箱密码登录")
     @PostMapping("/loginByEmail")
     public String loginByEmail(@RequestBody @Validated LoginByEmail loginByEmail) {
         return userService.loginByEmail(loginByEmail);
     }
 
-    @Operation(summary = "当前在线人员")
+    @Operation(summary = "Query Current Online user/当前在线人员")
     @GetMapping("/currentOnlineUsers")
     public List<User> currentOnlineUsers() {
         return userService.currentOnlineUsers();
     }
 
-    @Operation(summary = "将用户踢下线")
+    @Operation(summary = "Kick Someone Offline/将用户踢下线")
     @GetMapping("/kickOut")
     public void kickOut(@RequestParam @NotBlank String userId) {
         userService.kickOut(userId);
     }
 
 
-    @Operation(summary = "新增或修改用户")
+    @Operation(summary = "Add Or Update User/新增或修改用户")
     @PostMapping("/addOrUpdate")
     public void addOrUpdate(@RequestBody User user) {
         userService.addOrUpdate(user);

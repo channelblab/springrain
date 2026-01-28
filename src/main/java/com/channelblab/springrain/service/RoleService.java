@@ -17,7 +17,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,16 +35,14 @@ public class RoleService {
     private UserRoleDao userRoleDao;
 
 
+    @Transactional
     public void addOrUpdate(Role role) {
         if (ObjectUtils.isEmpty(role.getId())) {
             //add
             role.setType(RoleType.CUSTOM);
-            role.setCreateTime(new Date());
-            role.setUpdateTime(new Date());
             roleDao.insert(role);
         } else {
             //update
-            role.setUpdateTime(new Date());
             roleDao.updateById(role);
         }
         //fully update
@@ -56,15 +53,6 @@ public class RoleService {
             rp.setRoleId(role.getId());
             rp.setPermissionId(item.getId());
             rolePermissionDao.insert(rp);
-        });
-
-        userRoleDao.delete(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getRoleId, role.getId()));
-        List<User> users = role.getUsers();
-        users.forEach(item -> {
-            UserRole ur = new UserRole();
-            ur.setUserId(item.getId());
-            ur.setRoleId(role.getId());
-            userRoleDao.insert(ur);
         });
     }
 
@@ -111,7 +99,8 @@ public class RoleService {
 
     }
 
-    public List<Role> forSelect() {
+    public List<Role> forSelect(String searchKey) {
+        //todo 添加搜索条件
         return roleDao.selectList(Wrappers.lambdaQuery(Role.class));
     }
 }

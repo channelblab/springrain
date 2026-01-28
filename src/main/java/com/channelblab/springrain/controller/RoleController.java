@@ -19,7 +19,7 @@ import java.util.List;
  * @description：
  * @modified By：
  */
-@Tag(name = "框架-角色接口")
+@Tag(name = "Framework-Role/框架-角色接口")
 @Validated
 @RestController
 @RequestMapping("/role")
@@ -42,8 +42,8 @@ public class RoleController {
 
     @Operation(summary = "下拉查询列表")
     @GetMapping("/forSelect")
-    public List<Role> forSelect() {
-        return roleService.forSelect();
+    public List<Role> forSelect(String searchKey) {
+        return roleService.forSelect(searchKey);
     }
 
     @Operation(summary = "删除角色")

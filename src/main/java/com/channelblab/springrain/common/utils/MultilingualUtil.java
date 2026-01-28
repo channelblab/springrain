@@ -43,11 +43,11 @@ public class MultilingualUtil {
     public static String get(String symbol) {
         String targetLang = LangHolder.getLang();
         if (!ObjectUtils.isEmpty(symbol) && !ObjectUtils.isEmpty(targetLang)) {
-            List list = cacheManager.getCache(CachePrefix.MULTILINGUAL.getValue()).get(targetLang, List.class);
+            List list = cacheManager.getCache(CachePrefix.MULTILINGUAL.getValue()).get(targetLang + "::" + MultilingualType.BACKEND, List.class);
             if (!CollectionUtils.isEmpty(list)) {
                 for (Object item : list) {
                     Multilingual multilingual = (Multilingual) item;
-                    if (multilingual.equals(symbol)) {
+                    if (multilingual.getSymbol().equals(symbol)) {
                         return multilingual.getSymbolValue();
                     }
                 }

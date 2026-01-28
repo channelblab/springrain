@@ -1,5 +1,6 @@
 package com.channelblab.springrain.common.aop;
 
+import com.channelblab.springrain.common.enums.HeaderName;
 import com.channelblab.springrain.common.holder.LangHolder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -28,10 +29,10 @@ public class LanguageAspect {
     public Object doLogic(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        String lang = request.getHeader("H-LANG");
+        String lang = request.getHeader(HeaderName.HEADER_LANG.getValue());
         LangHolder.setLang(ObjectUtils.isEmpty(lang) ? "zh-CN" : lang);
         Object proceed = joinPoint.proceed();
-        LangHolder.remove();
+        //LangHolder.remove();
         return proceed;
     }
 

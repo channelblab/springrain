@@ -20,7 +20,6 @@ import java.util.*;
  */
 @Slf4j
 public class UserUtil {
-    // cache
     private static volatile CacheManager cacheManager;
 
     public static void init(CacheManager cm) {
